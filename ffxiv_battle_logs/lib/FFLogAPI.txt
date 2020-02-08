@@ -1,0 +1,22 @@
+GET /zones - Gets an array of Zone objects. Each zone corresponds to a raid/dungeon instance in the game and has its own set of encounters.
+
+GET /classes - Gets an array of Class objects. Each Class corresponds to a class in the game.
+
+GET /rankings/encounter/{encounterID} - Gets an object that contains a total count and an array of EncounterRanking objects and a total number of rankings for that encounter. Each EncounterRanking corresponds to a single character or guild/team.
+
+GET /rankings/character/{characterName}/{serverName}/{serverRegion} - Gets an array of CharacterRanking objects. Each CharacterRanking corresponds to a single rank on a fight for the specified character.
+
+GET /parses/character/{characterName}/{serverName}/{serverRegion} - Obtains all parses for a character in the zone across all specs. Every parse is included and not just rankings.
+
+GET /reports/guild/{guildName}/{serverName}/{serverRegion} - Gets an array of Report objects. Each Report corresponds to a single calendar report for the specified guild.
+
+
+GET /reports/user/{userName} - Gets an array of Report objects. Each Report corresponds to a single calendar report for the specified user's personal logs.
+
+
+GET /report/fights/{code} - Gets arrays of fights and the participants in those fights. Each Fight corresponds to a single pull of a boss.
+
+GET /report/events/{view}/{code} - Gets a set of events based off the view you're asking for. This exactly corresponds to the Events view on the site.
+
+GET /report/tables/{view}/{code} - Gets a table of entries, either by actor or ability, of damage, healing and cast totals for each entry. This API exactly follows what is returned for the Tables panes on the site. It can and will change as the needs of those panes do, and as such should never be considered a frozen API. Use at your own risk.
+

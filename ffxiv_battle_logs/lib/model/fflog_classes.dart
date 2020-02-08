@@ -14,7 +14,9 @@ class FFLogZone {
 }
 
 class FFLogAccount {
+  final String userName;
 
+  FFLogAccount(this.userName);
 }
 
 class FFLogFight {

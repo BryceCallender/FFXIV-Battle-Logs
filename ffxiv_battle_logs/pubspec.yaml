@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -24,27 +24,49 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   charts_flutter: ^0.8.1
+  http: ^0.12.0+4
+  flutter_launcher_icons: ^0.7.4
+#
+#  # Check that you have this dependency (added in the previous step)
+#  firebase_core: ^0.4.0+9
+#
+#  # Add the dependency for the FlutterFire plugin for Google Analytics
+#  firebase_analytics: ^5.0.2
+#
+#  # Add the dependencies for any other Firebase products you want to use in your app
+#  # For example, to use Firebase Authentication and Cloud Firestore
+#  firebase_auth: ^0.14.0+5
+#  cloud_firestore: ^0.12.9+5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/AppIconWithoutLog.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/banners/112000/
+    - assets/images/banners/113000/
+    - assets/images/class_action_icons/000000/
+    - assets/images/class_action_icons/001000/
+    - assets/images/class_action_icons/002000/
+    - assets/images/class_action_icons/003000/
+    - assets/images/class_icons/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
