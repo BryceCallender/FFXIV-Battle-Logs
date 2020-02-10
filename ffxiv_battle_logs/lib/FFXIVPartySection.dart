@@ -1,4 +1,4 @@
-import 'package:ffxiv_battle_logs/model/ffxiv_classes.dart';
+import 'package:ffxiv_battle_logs/ffxiv_classes.dart';
 import 'package:flutter/material.dart';
 
 class FFXIVPartySection extends StatelessWidget {
