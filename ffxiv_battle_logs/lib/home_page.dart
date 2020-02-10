@@ -61,7 +61,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                                   maxHeight: 64,
                                 ),
                                 child: Image.asset(
-                                    "assets/images/map_icons/060000/060834.png",
+                                    "assets/images/map_icons/060000/060855.png",
                                     fit: BoxFit.cover),
                               ),
                               title: Text(widget.zoneData
