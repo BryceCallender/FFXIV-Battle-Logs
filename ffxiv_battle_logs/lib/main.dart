@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        //primaryColor: Color.fromRGBO(58, 66, 86, 1.0)
       ),
       home: MyHomePage(title: 'FFXIV Battle Logs'),
     );

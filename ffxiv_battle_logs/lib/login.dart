@@ -1,13 +1,14 @@
 import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/home_page.dart';
+import 'package:ffxiv_battle_logs/register.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 
 class Login extends StatefulWidget {
   final String title;
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+//  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Login({Key key, this.title}) : super(key: key);
@@ -15,19 +16,19 @@ class Login extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _LoginState();
 
-  Future<FirebaseUser> _handleSignIn() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-    print("signed in " + user.displayName);
-    return user;
-  }
+//  Future<FirebaseUser> _handleSignIn() async {
+//    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+//    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+//
+//    final AuthCredential credential = GoogleAuthProvider.getCredential(
+//      accessToken: googleAuth.accessToken,
+//      idToken: googleAuth.idToken,
+//    );
+//
+//    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+//    print("signed in " + user.displayName);
+//    return user;
+//  }
 }
 
 class _LoginState extends State<Login> {
@@ -76,9 +77,9 @@ class _LoginState extends State<Login> {
               RaisedButton(
                 child: Text("Login"),
                 onPressed: () {
-                  widget._handleSignIn()
-                      .then((FirebaseUser user) => print(user))
-                      .catchError((e) => print(e));
+//                  widget._handleSignIn()
+//                      .then((FirebaseUser user) => print(user))
+//                      .catchError((e) => print(e));
                   if (_formKey.currentState.validate()) {
 //                    Scaffold.of(context)
 //                        .showSnackBar(SnackBar(content: Text("Processing...")));
@@ -90,7 +91,11 @@ class _LoginState extends State<Login> {
               ),
               RaisedButton(
                 child: Text("Create an Account"),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Register()));
+                },
               )
             ],
           ),

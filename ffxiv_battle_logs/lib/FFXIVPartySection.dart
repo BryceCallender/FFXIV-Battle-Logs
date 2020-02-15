@@ -13,61 +13,93 @@ class FFXIVPartySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Center(
-          child: Text("Party Composition", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
-      ),
-      Text("Tanks"),
-      Row(children: [
-        Image.asset(ffxivParty.characters[0].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[0].name)
-      ]),
-      Row(children: [
-        Image.asset(ffxivParty.characters[1].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[1].name)
-      ]),
-      Text("Healers"),
-      Row(children: [
-        Image.asset(ffxivParty.characters[2].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[2].name)
-      ]),
-      Row(children: [
-        Image.asset(ffxivParty.characters[3].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[3].name)
-      ]),
-      Text("DPS"),
-      Row(children: [
-        Image.asset(ffxivParty.characters[4].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[4].name)
-      ]),
-      Row(children: [
-        Image.asset(ffxivParty.characters[5].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[5].name)
-      ]),
-      Row(children: [
-        Image.asset(ffxivParty.characters[6].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[6].name)
-      ]),
-      Row(children: [
-        Image.asset(ffxivParty.characters[7].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        SizedBox(width: boxSeparationSize),
-        Text(ffxivParty.characters[7].name)
-      ]),
-    ]);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+            child: Text(
+          "Party Composition",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        )),
+        Text("Tanks"),
+        GestureDetector(
+          child: Row(
+            children: [
+              Image.asset(ffxivParty.characters[0].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              SizedBox(width: boxSeparationSize),
+              Text(ffxivParty.characters[0].name),
+            ],
+          ),
+          onTap: () {
+            print("Tank pressed");
+          },
+        ),
+        Row(
+          children: [
+            Image.asset(ffxivParty.characters[1].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            SizedBox(width: boxSeparationSize),
+            Text(ffxivParty.characters[1].name)
+          ],
+        ),
+        Divider(
+          thickness: 3.0,
+        ),
+        Text("Healers"),
+        Row(
+          children: [
+            Image.asset(ffxivParty.characters[2].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            SizedBox(width: boxSeparationSize),
+            Text(ffxivParty.characters[2].name)
+          ],
+        ),
+        Row(
+          children: [
+            Image.asset(ffxivParty.characters[3].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            SizedBox(width: boxSeparationSize),
+            Text(ffxivParty.characters[3].name)
+          ],
+        ),
+        Divider(
+          thickness: 3.0,
+        ),
+        Text("DPS"),
+        Row(
+          children: [
+            Image.asset(ffxivParty.characters[4].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            SizedBox(width: boxSeparationSize),
+            Text(ffxivParty.characters[4].name)
+          ],
+        ),
+        Row(
+          children: [
+            Image.asset(ffxivParty.characters[5].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            SizedBox(width: boxSeparationSize),
+            Text(ffxivParty.characters[5].name)
+          ],
+        ),
+        Row(
+          children: [
+            Image.asset(ffxivParty.characters[6].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            SizedBox(width: boxSeparationSize),
+            Text(ffxivParty.characters[6].name)
+          ],
+        ),
+        Row(
+          children: [
+            Image.asset(ffxivParty.characters[7].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            SizedBox(width: boxSeparationSize),
+            Text(ffxivParty.characters[7].name)
+          ],
+        ),
+      ],
+    );
   }
 }

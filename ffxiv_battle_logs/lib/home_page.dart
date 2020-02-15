@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:async/async.dart';
+import 'package:ffxiv_battle_logs/ff_logfights_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -72,7 +73,10 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                                           snapshot.data[index].start))),
                               trailing: Icon(Icons.keyboard_arrow_right),
                               onTap: () {
-                                print("I have been tapped $index");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => FFLogFightsPage(report: snapshot.data[index]))
+                                );
                               },
                             ),
                           ],

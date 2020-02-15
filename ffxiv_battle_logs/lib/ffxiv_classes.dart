@@ -9,11 +9,11 @@ class FFXIVClass {
   String iconPath;
   Priority priority;
 
-  static const tanks = ["Paladin", "Dark Knight", "Warrior", "Gunbreaker"];
-  static const healers = ["White Mage", "Scholar", "Astrologian"];
+  static const tanks = ["Paladin", "DarkKnight", "Warrior", "Gunbreaker"];
+  static const healers = ["WhiteMage", "Scholar", "Astrologian"];
 
   FFXIVClass(this.name) {
-    iconPath = "assets/images/class_icons/" + name.replaceAll(" ", "_").toLowerCase() + ".png";
+    iconPath = "assets/images/class_icons/" + name.toLowerCase() + ".png";
 
     if(tanks.contains(name)) {
       priority = Priority.TANK;
@@ -22,10 +22,13 @@ class FFXIVClass {
     }else {
       priority = Priority.DPS;
     }
+
+    print(priority.toString() + " " + name);
   }
 }
 
 class FFXIVCharacter {
+  final int sourceID;
   final String name;
   String region;
   final String world;
@@ -47,7 +50,7 @@ class FFXIVCharacter {
     "Masamune","Pandaemonium","Shinryu","Titan"];
 
 
-  FFXIVCharacter(this.name, this.world, this.playerClass) {
+  FFXIVCharacter(this.name, this.sourceID, this.world, this.playerClass) {
     if(regionNA.contains(world)){
       region = "NA";
     }else if(regionEU.contains(world)){
@@ -63,7 +66,9 @@ class FFXIVCharacter {
 class FFXIVParty {
   List<FFXIVCharacter> characters = new List<FFXIVCharacter>();
 
-  FFXIVParty({this.characters});
+  FFXIVParty(this.characters) {
+    sortClassesByPriority();
+  }
 
   sortClassesByPriority() {
     characters.sort((a,b) => a.playerClass.priority.index.compareTo(b.playerClass.priority.index));
