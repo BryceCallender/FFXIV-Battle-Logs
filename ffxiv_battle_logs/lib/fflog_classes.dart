@@ -221,13 +221,24 @@ class FFLogSummaryEvent {
 }
 
 class FFLogDamageDoneEvent {
-  final String typeToSearch = "calculateddamage";
+  final int timeStamp;
+  final String type;
+  final int sourceID; //Who used it
+  final Ability ability;
+  final int amount;
 
-//  final int timeStamp;
-//  final String type;
-//  final int sourceID; //Who used it
-//  final Ability ability;
-//  final int amount;
+  FFLogDamageDoneEvent({this.timeStamp, this.type, this.sourceID, this.ability, this.amount});
+
+  factory FFLogDamageDoneEvent.fromJson(Map<String, dynamic> json) {
+    return FFLogDamageDoneEvent(
+      timeStamp: json["timestamp"] as int,
+      type: json["type"] as String,
+      sourceID: json["sourceID"] as int,
+      ability: Ability.fromJson(json["ability"]),
+      amount: json["amount"] as int
+    );
+  }
+
 }
 
 class Ability {
