@@ -42,6 +42,7 @@ dependencies:
   firebase_database: ^3.1.1
 
   google_sign_in: ^4.1.1
+  tuple: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -50,7 +51,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/AppIconWithoutLog.png"
+  image_path: "assets/images/AppIconWithoutLogBackground.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -64,6 +65,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/zones.json
     - assets/images/banners/112000/
     - assets/images/banners/113000/
     - assets/images/map_icons/060000/

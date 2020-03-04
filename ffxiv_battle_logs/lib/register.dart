@@ -1,5 +1,8 @@
+import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/home_page.dart';
+import 'package:ffxiv_battle_logs/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
@@ -10,6 +13,11 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   bool hasVerifiedFFLogUsername = false;
+  String _email;
+  String _password;
+  String _ffLogUsername;
+
+  final FirebaseAuthentication _auth = new FirebaseAuthentication();
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +42,7 @@ class _RegisterState extends State<Register> {
                   }
                   return null;
                 },
+                onSaved: (value) => _ffLogUsername = value,
               ),
               Row(
                 children: [
@@ -51,14 +60,15 @@ class _RegisterState extends State<Register> {
               TextFormField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Username',
+                  labelText: 'Email',
                 ),
                 validator: (value) {
                   if (value.isEmpty) {
-                    return "Please enter a username";
+                    return "Please enter a email";
                   }
                   return null;
                 },
+                onSaved: (value) => _email = value.trim(),
               ),
               TextFormField(
                 obscureText: true,
@@ -72,10 +82,11 @@ class _RegisterState extends State<Register> {
                   }
                   return null;
                 },
+                onSaved: (value) => _password = value,
               ),
               RaisedButton(
                 child: Text("Create my account"),
-                onPressed: () {
+                onPressed: () async {
                   // Validate returns true if the form is valid, otherwise false.
                   if (_formKey.currentState.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
@@ -84,6 +95,10 @@ class _RegisterState extends State<Register> {
                     if(hasVerifiedFFLogUsername) {
                       Scaffold.of(context).showSnackBar(
                           SnackBar(content: Text('Processing Data')));
+
+                      validateAndSubmit();
+
+
                     } else {
                       Scaffold.of(context).showSnackBar(
                           SnackBar(content: Text('Please verify your FF Log username and hit the checkbox')));
@@ -97,5 +112,29 @@ class _RegisterState extends State<Register> {
         ),
       ),
     );
+  }
+
+  // Check if form is valid before perform login or signup
+  bool validateAndSave() {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void validateAndSubmit() async {
+    if (validateAndSave() && _formKey.currentState.validate()) {
+      FirebaseUser user  = await _auth.signUp(_email, _password, _ffLogUsername);
+      print("Logged in $user");
+
+      if (user != null) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Login(title: "Login Page")));
+      }
+    }
   }
 }

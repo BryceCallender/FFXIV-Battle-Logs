@@ -65,7 +65,8 @@ class FFLogFightsPage extends StatelessWidget {
                                         MaterialPageRoute(builder: (context) => SpecificFightReport(
                                             ffLogFightData: snapshot.data.ffLogFightData[index],
                                             partyMembers: snapshot.data.partyMembersInvolved,
-                                            reportID: report.id),
+                                            reportID: report.id,
+                                        ),
                                         ),
                                       );
                                     }),

@@ -1,5 +1,11 @@
-import 'package:ffxiv_battle_logs/ffxiv_classes.dart';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:ffxiv_battle_logs/ffxiv_classes.dart';
+import 'package:flutter/services.dart';
+import 'package:tuple/tuple.dart';
+
+//Requesting personal reports
 class FFLogReport {
   final String id;
   final String title;
@@ -22,6 +28,29 @@ class FFLogReport {
   }
 }
 
+//Requesting other people
+class FFLogParseReport {
+  final String encounterName;
+  final String classType;
+  final String reportID;
+  final int startTime;
+  final int duration;
+  final int difficulty;
+
+  FFLogParseReport({this.encounterName, this.classType, this.reportID, this.startTime, this.duration, this.difficulty});
+
+  factory FFLogParseReport.fromJson(Map<String, dynamic> json) {
+    return FFLogParseReport(
+        encounterName: json["encounterName"] as String,
+        classType: json["spec"] as String,
+        startTime: json["startTime"] as int,
+        reportID: json["reportID"],
+        duration: json["duration"] as int,
+        difficulty: json["difficulty"] as int
+    );
+  }
+}
+
 class FFLogZone {
   final int id;
   final String zoneName;
@@ -31,7 +60,7 @@ class FFLogZone {
   FFLogZone({this.id,this.zoneName,this.isFrozen,this.encounters});
 
   factory FFLogZone.fromJson(Map<String, dynamic> json) {
-    List<Encounter> encounters = new List();
+    List<Encounter> encounters = [];
 
     if(json["encounters"] != null) {
       var encounterList = json["encounters"] as List;
@@ -51,12 +80,20 @@ class FFLogZone {
 }
 
 class FFLogZones {
-  final List<FFLogZone> zones;
+  List<FFLogZone> zones;
 
-  FFLogZones(this.zones);
+  FFLogZones() {
+    zones = [];
 
-  void addZone(FFLogZone zone) {
-    zones.add(zone);
+    Future<String> contents = rootBundle.loadString("assets/zones.json");
+
+    contents.then((result) {
+      var zoneList = jsonDecode(result) as List;
+
+      zoneList.forEach((zoneData) {
+        zones.add(FFLogZone.fromJson(zoneData));
+      });
+    });
   }
 
   String zoneIDToName(int id) {
@@ -66,8 +103,68 @@ class FFLogZones {
         name = zone.zoneName;
       }
     });
-
     return name;
+  }
+
+  bool isZoneExtreme(int id) {
+    bool isExtreme = false;
+    zones.forEach((zone) {
+      if(zone.zoneName.contains("Extreme") && zone.id == id) {
+        isExtreme = true;
+      }
+    });
+    return isExtreme;
+  }
+
+  List<String> getZoneNames() {
+    List<String> zoneNames = [];
+
+    this.zones.forEach((zone) {
+        zoneNames.add(zone.zoneName);
+    });
+
+    return zoneNames;
+  }
+
+
+  Future<List<Tuple2<String,int>>> getZoneNamesAsync() async {
+    String contents = await rootBundle.loadString("assets/zones.json");
+
+    bool foundDungeon = false;
+    bool foundTrial = false;
+
+    List<String> appendData = ["ARR and HW ", "Stormblood ", "Shadowbringers "];
+    int appendIndex = 0;
+
+    var zoneList = jsonDecode(contents) as List;
+    zones = [];
+
+    zoneList.forEach((zoneData) {
+      zones.add(FFLogZone.fromJson(zoneData));
+    });
+
+    List<Tuple2<String,int>> zoneNames = [];
+
+    this.zones.forEach((zone) {
+      String zoneName = zone.zoneName;
+      if(zone.zoneName == "Dungeons (Endgame)") {
+        foundDungeon = true;
+        zoneName = appendData[appendIndex] + zoneName;
+      }else if(zone.zoneName == "Trials (Extreme)") {
+        foundTrial = true;
+        zoneName = appendData[appendIndex] + zoneName;
+      }
+
+      if(foundDungeon && foundTrial) {
+        appendIndex++;
+        foundDungeon = false;
+        foundTrial = false;
+      }
+
+      zoneNames.add(Tuple2<String,int>(zoneName, zone.id));
+    });
+
+    return zoneNames;
   }
 }
 
@@ -98,8 +195,8 @@ class FFLogFight {
   FFLogFight({this.ffLogFightData,this.partyMembersInvolved});
 
   factory FFLogFight.fromJson(Map<String, dynamic> json) {
-    List<FFLogFightData> fights = new List();
-    List<Friendly> friendlies = new List();
+    List<FFLogFightData> fights = [];
+    List<Friendly> friendlies = [];
 
     if(json["fights"] != null) {
       var list = json["fights"] as List;
@@ -138,7 +235,7 @@ class FFLogFightData {
   final String zoneName;
   final int difficulty; //Will determine normal,hard,extreme,savage,etc...
   final bool kill;
-  final int phase;//Will be > 8 since its for every fight which incorporates people who joined/left.
+  final int phase;
 
   FFLogFightData({this.id,this.start,this.end,this.boss,this.name,this.zoneID,
     this.zoneName, this.difficulty,this.kill,this.phase});
@@ -168,7 +265,7 @@ class Friendly {
   Friendly({this.id,this.guid,this.character,this.fightIds});
 
   factory Friendly.fromJson(Map<String, dynamic> json) {
-    List<Fight> fights = new List();
+    List<Fight> fights = [];
 
     if(json["fights"] != null) {
       var list = json["fights"] as List;
@@ -260,7 +357,6 @@ enum TableView {
   damage_taken,
   healing,
 }
-
 
 class FFLogTableView {
   final TableView tableView;

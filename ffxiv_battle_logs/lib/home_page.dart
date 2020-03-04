@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:async/async.dart';
+import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/ff_logfights_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -14,12 +15,13 @@ class PersonalLogPage extends StatefulWidget {
   State<StatefulWidget> createState() => _MyPersonalLogPage();
 
   final FFLogZones zoneData;
-  final AsyncMemoizer memoizer = AsyncMemoizer();
+  final String userName;
 
-  PersonalLogPage(this.zoneData);
+  PersonalLogPage(this.userName, this.zoneData);
 }
 
 class _MyPersonalLogPage extends State<PersonalLogPage> {
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +30,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Personal Logs")),
+      appBar: AppBar(title: Text(widget.userName + " Personal Logs")),
       body: FutureBuilder(
           future: getReports(),
           builder: (context, snapshot) {
@@ -45,7 +47,16 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
 
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData) {
-              return ListView.builder(
+              if (snapshot.data.length == 0) {
+                return Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text("You have no personal logs yet!"),
+                    ],
+                  ),
+                );
+              } else {
+                return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     return Container(
@@ -61,7 +72,8 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                                   maxWidth: 64,
                                   maxHeight: 64,
                                 ),
-                                child: Image.asset(
+                                child: Image.asset(widget.zoneData.isZoneExtreme(snapshot.data[index].zone) ?
+                                    "assets/images/map_icons/060000/060834.png":
                                     "assets/images/map_icons/060000/060855.png",
                                     fit: BoxFit.cover),
                               ),
@@ -74,45 +86,47 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                               trailing: Icon(Icons.keyboard_arrow_right),
                               onTap: () {
                                 Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => FFLogFightsPage(report: snapshot.data[index]))
-                                );
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FFLogFightsPage(
+                                            report: snapshot.data[index])));
                               },
                             ),
                           ],
                         ),
                       ),
                     );
-                  });
-            } else {
-              return Container();
+                  },
+                );
+              }
             }
+            return Container();
           }),
     );
   }
 
   Future<List<FFLogReport>> getReports() async {
-    widget.memoizer.runOnce(() async {
-      print("Getting zone data");
-      var response = await http.get(
-          "https://www.fflogs.com/v1/zones?api_key=a468c182a1d6b2464526fb12ce56044f");
+//    print("Getting zone data");
+//    var zoneResponse = await http.get(
+//        "https://www.fflogs.com/v1/zones?api_key=a468c182a1d6b2464526fb12ce56044f");
+//
+//    var zoneList = jsonDecode(zoneResponse.body) as List;
+//
+//    zoneList.forEach((zoneData) {
+//      widget.zoneData.addZone(FFLogZone.fromJson(zoneData));
+//    });
 
-      var list = jsonDecode(response.body) as List;
-
-      list.forEach((zoneData) {
-        widget.zoneData.addZone(FFLogZone.fromJson(zoneData));
-      });
-    });
-
-    List<FFLogReport> reports = new List();
+    List<FFLogReport> reports = [];
 
     http.Response response = await http.get(
-        "https://www.fflogs.com/v1/reports/user/BlueFever?api_key=a468c182a1d6b2464526fb12ce56044f");
+        "https://www.fflogs.com/v1/reports/user/" +
+            widget.userName +
+            "?api_key=a468c182a1d6b2464526fb12ce56044f");
 
-    var list = jsonDecode(response.body) as List;
+    var reportList = jsonDecode(response.body) as List;
 
-    for (int i = 0; i < list.length; i++) {
-      reports.add(FFLogReport.fromJson(list[i]));
+    for (int i = 0; i < reportList.length; i++) {
+      reports.add(FFLogReport.fromJson(reportList[i]));
     }
 
     return reports;

@@ -1,5 +1,6 @@
 import 'package:ffxiv_battle_logs/FadingTextWidget.dart';
 import 'package:ffxiv_battle_logs/login.dart';
+import 'package:ffxiv_battle_logs/searchusers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -89,7 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Login(title: "Login Page")),
+                      MaterialPageRoute(
+                          builder: (context) => Login(title: "Login Page")),
                     );
                   },
                   child: Text("Login")),
@@ -101,10 +103,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(8.0),
                   splashColor: Colors.blueAccent,
                   onPressed: () {
-//                    Navigator.push(
-//                    context,
-//                    MaterialPageRoute(builder: (context) => SecondRoute()),
-//                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SearchUsers()),
+                    );
                   },
                   child: Text("Search"))
             ],
