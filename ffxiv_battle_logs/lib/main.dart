@@ -1,11 +1,17 @@
 import 'package:ffxiv_battle_logs/FadingTextWidget.dart';
 import 'package:ffxiv_battle_logs/login.dart';
 import 'package:ffxiv_battle_logs/searchusers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'authentication.dart';
+import 'fflog_classes.dart';
+import 'home_page.dart';
+
 void main() {
-//  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+//  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+//      .then((_) {
 //    runApp(new MyApp());
 //  });
   runApp(new MyApp());
@@ -18,17 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
-        //primaryColor: Color.fromRGBO(58, 66, 86, 1.0)
       ),
       home: MyHomePage(title: 'FFXIV Battle Logs'),
     );
@@ -38,15 +34,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -54,6 +41,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final FirebaseAuthentication _auth = new FirebaseAuthentication();
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -80,21 +69,31 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Image.asset("assets/images/AppIconWithoutLog.png"),
               FadingTextWidget(),
-              FlatButton(
-                  color: Colors.blue,
-                  textColor: Colors.white,
-                  disabledColor: Colors.grey,
-                  disabledTextColor: Colors.black,
-                  padding: EdgeInsets.all(8.0),
-                  splashColor: Colors.blueAccent,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Login(title: "Login Page")),
+              FutureBuilder(
+                future: showLoginOrHomePageButton(),
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                    return snapshot.data;
+                  }else {
+                    return FlatButton(
+                        color: Colors.blue,
+                        textColor: Colors.white,
+                        disabledColor: Colors.grey,
+                        disabledTextColor: Colors.black,
+                        padding: EdgeInsets.all(8.0),
+                        splashColor: Colors.blueAccent,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Login(title: "Login Page")),
+                          );
+                        },
+                        child: Text("Login"),
                     );
-                  },
-                  child: Text("Login")),
+                  }
+                },
+              ),
               FlatButton(
                   color: Colors.blue,
                   textColor: Colors.white,
@@ -114,5 +113,66 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  Widget _getLandingPage() {
+    return StreamBuilder<FirebaseUser>(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data.providerData.length ==
+              1) { // logged in using email and password
+            return PersonalLogPage(snapshot.data.displayName, new FFLogZones());
+//          }
+            //else { // logged in using other providers
+//            return MainPage();
+//          }
+          } else {
+            return Login(title: "Login Page");
+          }
+        }else {
+          return MyHomePage(title: 'FFXIV Battle Logs');
+        }
+      },
+    );
+  }
+
+  Future<Widget> showLoginOrHomePageButton() async {
+    FirebaseUser user = await _auth.getCurrentUser();
+
+    if(user == null) {
+      return FlatButton(
+          color: Colors.blue,
+          textColor: Colors.white,
+          disabledColor: Colors.grey,
+          disabledTextColor: Colors.black,
+          padding: EdgeInsets.all(8.0),
+          splashColor: Colors.blueAccent,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Login(title: "Login Page")),
+            );
+          },
+          child: Text("Login"),
+      );
+    }else {
+      return FlatButton(
+          color: Colors.blue,
+          textColor: Colors.white,
+          disabledColor: Colors.grey,
+          disabledTextColor: Colors.black,
+          padding: EdgeInsets.all(8.0),
+          splashColor: Colors.blueAccent,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PersonalLogPage(user.displayName, new FFLogZones())),
+            );
+          },
+          child: Text("Home page"));
+    }
   }
 }

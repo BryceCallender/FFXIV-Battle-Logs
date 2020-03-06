@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:async/async.dart';
-import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/ff_logfights_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -106,16 +104,6 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
   }
 
   Future<List<FFLogReport>> getReports() async {
-//    print("Getting zone data");
-//    var zoneResponse = await http.get(
-//        "https://www.fflogs.com/v1/zones?api_key=a468c182a1d6b2464526fb12ce56044f");
-//
-//    var zoneList = jsonDecode(zoneResponse.body) as List;
-//
-//    zoneList.forEach((zoneData) {
-//      widget.zoneData.addZone(FFLogZone.fromJson(zoneData));
-//    });
-
     List<FFLogReport> reports = [];
 
     http.Response response = await http.get(

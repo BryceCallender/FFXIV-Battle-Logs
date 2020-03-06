@@ -235,10 +235,11 @@ class FFLogFightData {
   final String zoneName;
   final int difficulty; //Will determine normal,hard,extreme,savage,etc...
   final bool kill;
+  final int bossPercentage;
   final int phase;
 
   FFLogFightData({this.id,this.start,this.end,this.boss,this.name,this.zoneID,
-    this.zoneName, this.difficulty,this.kill,this.phase});
+    this.zoneName, this.difficulty,this.kill, this.bossPercentage, this.phase});
 
   factory FFLogFightData.fromJson(Map<String, dynamic> json) {
     return FFLogFightData(
@@ -251,6 +252,7 @@ class FFLogFightData {
       zoneName: json["zoneName"] as String,
       difficulty: json["difficulty"] as int,
       kill: json["kill"] as bool,
+      bossPercentage: json["bossPercentage"] as int,
       phase: json["lastPhaseForPercentageDisplay"] as int
     );
   }

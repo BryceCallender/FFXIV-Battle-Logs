@@ -27,6 +27,13 @@ class SearchResults extends StatelessWidget {
       body: FutureBuilder(
         future: getReports(),
         builder: (context, snapshot) {
+          if(snapshot.data == null) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("The search for $characterName returned no results. Either the name is incorrect or there is no logs under this username!"),
+            );
+          }
+
           if (snapshot.connectionState == ConnectionState.none &&
               snapshot.hasData == null) {
             return Container();

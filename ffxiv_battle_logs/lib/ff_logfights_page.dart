@@ -5,6 +5,7 @@ import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/specificfight.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class FFLogFightsPage extends StatelessWidget {
   final FFLogReport report;
@@ -14,74 +15,109 @@ class FFLogFightsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(report.title),
-        ),
-        body: Container(
-            child: FutureBuilder(
-            future: getFights(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.none &&
-                  snapshot.hasData == null) {
-                return Container();
-              }
+      appBar: AppBar(
+        title: Text(report.title),
+      ),
+      body: Container(
+        child: FutureBuilder(
+          future: getFights(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.none &&
+                snapshot.hasData == null) {
+              return Container();
+            }
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                return ListView.builder(
-                    itemCount: snapshot.data.ffLogFightData.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        padding: EdgeInsets.only(top: 10.0),
-                        child: Card(
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 2.0,
-                                        color: snapshot.data.ffLogFightData[index].kill
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data.ffLogFightData.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Card(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 2.0,
+                                    color:
+                                        snapshot.data.ffLogFightData[index].kill
                                             ? Colors.green
                                             : Colors.red)),
-                                child: ListTile(
-                                    leading: Image.asset("assets/images/banners/112000/" + snapshot.data.ffLogFightData[index].name.replaceAll(" ", "_") + ".png"),
-                                    title: Text(snapshot.data.ffLogFightData[index].zoneName),
-                                    subtitle: Text("Duration: " +
-                                        Duration(milliseconds: (snapshot.data.ffLogFightData[index].end - snapshot.data.ffLogFightData[index].start))
-                                            .toString()
-                                            .split('.')
-                                            .first
-                                            .padLeft(8, "0")),
-                                    trailing: Icon(Icons.keyboard_arrow_right),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => SpecificFightReport(
-                                            ffLogFightData: snapshot.data.ffLogFightData[index],
-                                            partyMembers: snapshot.data.partyMembersInvolved,
-                                            reportID: report.id,
+                            child: ListTile(
+                                leading: Image.asset(
+                                    "assets/images/banners/112000/" +
+                                        snapshot.data.ffLogFightData[index].name
+                                            .replaceAll(" ", "_") +
+                                        ".png"),
+                                title: Text(snapshot
+                                    .data.ffLogFightData[index].zoneName),
+                                subtitle:
+                                  Wrap(children: [
+                                    Text("Duration: " +
+                                    Duration(
+                                            milliseconds: (snapshot.data
+                                                    .ffLogFightData[index].end -
+                                                snapshot
+                                                    .data
+                                                    .ffLogFightData[index]
+                                                    .start))
+                                        .toString()
+                                        .split('.')
+                                        .first
+                                        .padLeft(8, "0")),
+                                    Offstage(
+                                      offstage: (snapshot.data.ffLogFightData[index].bossPercentage == 0.0? true : false),
+                                      child: LinearPercentIndicator(
+                                        lineHeight: 14.0,
+                                        animation: true,
+                                        percent: (snapshot.data.ffLogFightData[index].bossPercentage / 10000),
+                                        backgroundColor: Colors.grey,
+                                        progressColor: getProgressColor(snapshot.data.ffLogFightData[index].bossPercentage / 100),
+                                        center: Text(
+                                          "${snapshot.data.ffLogFightData[index].bossPercentage / 100}% HP"
                                         ),
-                                        ),
-                                      );
-                                    }),
-                              ),
-                            ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SpecificFightReport(
+                                        ffLogFightData:
+                                            snapshot.data.ffLogFightData[index],
+                                        partyMembers:
+                                            snapshot.data.partyMembersInvolved,
+                                        reportID: report.id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                            ),
                           ),
-                        ),
-                      );
-                  },
-                );
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
             } else {
               return Container();
             }
           },
-        )));
+        ),
+      ),
+    );
   }
 
   Future<FFLogFight> getFights() async {
@@ -97,5 +133,19 @@ class FFLogFightsPage extends StatelessWidget {
     print(fight.ffLogFightData.length);
 
     return fight;
+  }
+
+  Color getProgressColor(double progressPercent) {
+    if(progressPercent > 75) {
+      return Colors.white;
+    }else if(progressPercent <= 75 && progressPercent > 50) {
+      return Colors.green;
+    }else if(progressPercent <= 50 && progressPercent > 20) {
+      return Colors.blue;
+    }else if(progressPercent <= 20 && progressPercent > 10) {
+      return Colors.deepPurpleAccent;
+    }else {
+      return Colors.deepOrangeAccent;
+    }
   }
 }
