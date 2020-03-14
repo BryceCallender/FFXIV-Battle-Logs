@@ -52,6 +52,7 @@ class FFLogFightsPage extends StatelessWidget {
                                             ? Colors.green
                                             : Colors.red)),
                             child: ListTile(
+                                dense: true, //maybe?
                                 leading: Image.asset(
                                     "assets/images/banners/112000/" +
                                         snapshot.data.ffLogFightData[index].name
@@ -63,29 +64,31 @@ class FFLogFightsPage extends StatelessWidget {
                                   Wrap(children: [
                                     Text("Duration: " +
                                     Duration(
-                                            milliseconds: (snapshot.data
-                                                    .ffLogFightData[index].end -
-                                                snapshot
-                                                    .data
-                                                    .ffLogFightData[index]
-                                                    .start))
+                                            milliseconds: (snapshot.data.ffLogFightData[index].end - snapshot.data.ffLogFightData[index].start))
                                         .toString()
                                         .split('.')
                                         .first
                                         .padLeft(8, "0")),
-                                    Offstage(
-                                      offstage: (snapshot.data.ffLogFightData[index].bossPercentage == 0.0? true : false),
-                                      child: LinearPercentIndicator(
-                                        lineHeight: 14.0,
-                                        animation: true,
-                                        percent: (snapshot.data.ffLogFightData[index].bossPercentage / 10000),
-                                        backgroundColor: Colors.grey,
-                                        progressColor: getProgressColor(snapshot.data.ffLogFightData[index].bossPercentage / 100),
-                                        center: Text(
-                                          "${snapshot.data.ffLogFightData[index].bossPercentage / 100}% HP"
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 3.0, bottom: 3.0),
+                                      child: Offstage(
+                                        offstage: snapshot.data.ffLogFightData[index].kill,
+                                        child: LinearPercentIndicator(
+                                          lineHeight: 16.0,
+                                          animation: true,
+                                          percent: (snapshot.data.ffLogFightData[index].bossPercentage / 10000),
+                                          backgroundColor: Colors.grey,
+                                          progressColor: getProgressColor(snapshot.data.ffLogFightData[index].bossPercentage / 100),
+                                          center: Text(
+                                            "${snapshot.data.ffLogFightData[index].bossPercentage / 100}% HP",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                                 trailing: Icon(Icons.keyboard_arrow_right),

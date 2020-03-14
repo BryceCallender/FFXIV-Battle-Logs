@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
+
+import 'darkthemepreference.dart';
 
 class SpecificFightReport extends StatefulWidget {
   FFXIVParty ffxivParty;
@@ -31,8 +34,12 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
   List<charts.Series<DPSInfo, String>> dpsData;
   List<charts.Series<HPSInfo, String>> hpsData;
 
+  DarkThemeProvider themeColor;
+
   @override
   Widget build(BuildContext context) {
+    themeColor = Provider.of<DarkThemeProvider>(context);
+    print("Dark theme: " + themeColor.darkTheme.toString());
     return Scaffold(
       appBar: AppBar(
         title: Text("Fight #" + widget.ffLogFightData.id.toString()),
@@ -68,7 +75,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
                       padding: EdgeInsets.only(left: 10, right: 10, top: 20),
                       child: SizedBox(
                         height: 400,
-                        child: ReportDataChart(snapshot.data),
+                        child: ReportDataChart(snapshot.data, vertical: false),
                       ),
                     ),
                   ],
@@ -105,43 +112,42 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           ),
           Divider(
             thickness: 3.0,
-            color: Colors.black,
           ),
           getPartyWidget(),
-          Text("Events"),
-          FutureBuilder(
-            future: getEventData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.none &&
-                  snapshot.hasData == null) {
-                return Container();
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                return ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return Image.asset(
-                      "assets/images/class_action_icons/" +
-                          snapshot.data[index].ability.abilityIcon,
-                      width: 40,
-                      height: 40,
-                    );
-                  },
-                  shrinkWrap: true,
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
+//          Text("Events"),
+//          FutureBuilder(
+//            future: getEventData(),
+//            builder: (context, snapshot) {
+//              if (snapshot.connectionState == ConnectionState.none &&
+//                  snapshot.hasData == null) {
+//                return Container();
+//              }
+//
+//              if (snapshot.connectionState == ConnectionState.waiting) {
+//                return Center(
+//                  child: CircularProgressIndicator(),
+//                );
+//              }
+//
+//              if (snapshot.connectionState == ConnectionState.done &&
+//                  snapshot.hasData) {
+//                return ListView.builder(
+//                  itemCount: snapshot.data.length,
+//                  itemBuilder: (context, index) {
+//                    return Image.asset(
+//                      "assets/images/class_action_icons/" +
+//                          snapshot.data[index].ability.abilityIcon,
+//                      width: 40,
+//                      height: 40,
+//                    );
+//                  },
+//                  shrinkWrap: true,
+//                );
+//              } else {
+//                return Container();
+//              }
+//            },
+//          ),
         ],
       ),
     );
@@ -160,45 +166,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
     widget.ffxivParty = new FFXIVParty(partyMembersInvolved);
 
-    return FFXIVPartySection(widget.ffxivParty);
-  }
-
-  Future<List<FFLogDamageDoneEvent>> getEventData() async {
-    List<FFLogDamageDoneEvent> eventData = [];
-
-    var events;
-    http.Response response;
-    String startTimestamp = widget.ffLogFightData.start.toString();
-
-//    do {
-//      response = await http.get(
-//          "https://www.fflogs.com/v1/report/events/damage-done/" +
-//              reportID +
-//              "?start=" + startTimestamp +
-//              "&end=" + ffLogFightData.end.toString() +
-//              "&api_key=a468c182a1d6b2464526fb12ce56044f");
-//
-//      print("https://www.fflogs.com/v1/report/events/damage-done/" +
-//          reportID +
-//          "?start=" + startTimestamp +
-//          "&end=" + ffLogFightData.end.toString() +
-//          "&api_key=a468c182a1d6b2464526fb12ce56044f");
-//
-//      events = jsonDecode(response.body);
-//
-//      var listOfEvents = events["events"] as List;
-//
-//      listOfEvents.forEach((event) {
-//        eventData.add(FFLogDamageDoneEvent.fromJson(event));
-//      });
-//
-//      startTimestamp = events["nextPageTimestamp"].toString();
-//
-//    }while(events.containsKey("nextPageTimestamp"));
-
-    print(eventData.length);
-
-    return eventData;
+    return FFXIVPartySection(widget.ffxivParty, widget.reportID, widget.ffLogFightData.start, widget.ffLogFightData.end);
   }
 
   Future<List<charts.Series>> getGraphData() async {
@@ -257,6 +225,9 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
         insideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
+        outsideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
+          return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
+        },
       ));
 
       chartData.add(
@@ -269,8 +240,10 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           labelAccessorFn: (DPSInfo dps, _) =>
               "RDPS: ${dps.rDPS.toStringAsFixed(1)}",
           insideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
-            return new charts.TextStyleSpec(
-                color: charts.MaterialPalette.black);
+            return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
+          },
+          outsideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
+            return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
           },
         ),
       );
@@ -294,7 +267,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
       entryList.forEach((player) {
         print(player);
-        if (player["name"] != "Limit Break" && player["name"] != "Ground Effect") {
+        if (player["name"] != "Limit Break" && player["name"] != "Ground Effect" && player["name"] != "Environment") {
           var hps = (player["total"] as int) /
               (widget.ffLogFightData.end - widget.ffLogFightData.start) *
               1000;
@@ -340,6 +313,9 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
         insideLabelStyleAccessorFn: (HPSInfo hps, _) {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
+        outsideLabelStyleAccessorFn: (HPSInfo hps, _) {
+          return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
+        },
       ));
 
       hpsChartData.add(
@@ -352,8 +328,10 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           labelAccessorFn: (HPSInfo hps, _) =>
               "Overheal: ${hps.overhealPercentage.toStringAsFixed(1)}%",
           insideLabelStyleAccessorFn: (HPSInfo hps, _) {
-            return new charts.TextStyleSpec(
-                color: charts.MaterialPalette.black);
+            return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
+          },
+          outsideLabelStyleAccessorFn: (HPSInfo hps, _) {
+            return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
           },
         ),
       );

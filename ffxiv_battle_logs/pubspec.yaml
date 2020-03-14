@@ -44,6 +44,9 @@ dependencies:
   tuple: ^1.0.3
   percent_indicator: ^2.1.1+1
 
+  shared_preferences: ^0.5.6+2
+  provider: ^4.0.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,6 +76,17 @@ flutter:
     - assets/images/class_action_icons/001000/
     - assets/images/class_action_icons/002000/
     - assets/images/class_action_icons/003000/
+    - assets/images/class_action_icons/010000/
+    - assets/images/class_action_icons/011000/
+    - assets/images/class_action_icons/012000/
+    - assets/images/class_action_icons/013000/
+    - assets/images/class_action_icons/014000/
+    - assets/images/class_action_icons/015000/
+    - assets/images/class_action_icons/016000/
+    - assets/images/class_action_icons/017000/
+    - assets/images/class_action_icons/018000/
+    - assets/images/class_action_icons/019000/
+    - assets/images/class_action_icons/020000/
     - assets/images/class_icons/
     - assets/images/
 

@@ -1,21 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:provider/provider.dart';
 
-class ReportDataChart extends StatelessWidget {
+import 'darkthemepreference.dart';
+
+class ReportDataChart extends StatefulWidget {
   final List<charts.Series> seriesList;
   final bool animate;
+  final bool vertical;
 
-  ReportDataChart(this.seriesList, {this.animate});
+  ReportDataChart(this.seriesList, {this.animate, this.vertical});
+
+  @override
+  _ReportDataChartState createState() => _ReportDataChartState();
+}
+
+class _ReportDataChartState extends State<ReportDataChart> {
+  DarkThemeProvider themeColor;
 
   @override
   Widget build(BuildContext context) {
+    themeColor = Provider.of<DarkThemeProvider>(context);
     return new charts.BarChart(
-      seriesList,
-      animate: animate,
-      vertical: false,
+      widget.seriesList,
+      animate: widget.animate,
+      vertical: widget.vertical,
       barGroupingType: charts.BarGroupingType.grouped,
       barRendererDecorator: new charts.BarLabelDecorator<String>(
         labelAnchor: charts.BarLabelAnchor.end
+      ),
+      domainAxis: new charts.OrdinalAxisSpec(
+          renderSpec: new charts.SmallTickRendererSpec(
+            // Tick and Label styling here.
+              labelStyle: new charts.TextStyleSpec(
+                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+
+              // Change the line colors to match text color.
+              lineStyle: new charts.LineStyleSpec(
+                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+          )
+      ),
+      /// Assign a custom style for the measure axis.
+      primaryMeasureAxis: new charts.NumericAxisSpec(
+          renderSpec: new charts.GridlineRendererSpec(
+
+            // Tick and Label styling here.
+              labelStyle: new charts.TextStyleSpec(
+                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+
+              // Change the line colors to match text color.
+              lineStyle: new charts.LineStyleSpec(
+                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+          ),
       ),
     );
   }

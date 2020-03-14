@@ -1,11 +1,13 @@
 import 'package:ffxiv_battle_logs/FadingTextWidget.dart';
 import 'package:ffxiv_battle_logs/login.dart';
 import 'package:ffxiv_battle_logs/searchusers.dart';
+import 'package:ffxiv_battle_logs/styles.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'authentication.dart';
+import 'darkthemepreference.dart';
 import 'fflog_classes.dart';
 import 'home_page.dart';
 
@@ -17,16 +19,41 @@ void main() {
   runApp(new MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  DarkThemeProvider themeProvider = new DarkThemeProvider();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentAppTheme();
+  }
+
+  void getCurrentAppTheme() async {
+    themeProvider.darkTheme =
+        await themeProvider.darkThemePreference.getTheme();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (_) => themeProvider,
+      child: Consumer<DarkThemeProvider>(
+        builder: (BuildContext context, DarkThemeProvider value, Widget child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: Styles.themeData(themeProvider.darkTheme, context),
+            home: MyHomePage(title: 'FFXIV Battle Logs'),
+          );
+        },
       ),
-      home: MyHomePage(title: 'FFXIV Battle Logs'),
     );
   }
 }
@@ -45,22 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    var themeChange = Provider.of<DarkThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Container(
         child: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -72,24 +91,25 @@ class _MyHomePageState extends State<MyHomePage> {
               FutureBuilder(
                 future: showLoginOrHomePageButton(),
                 builder: (context, snapshot) {
-                  if(snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.hasData) {
                     return snapshot.data;
-                  }else {
+                  } else {
                     return FlatButton(
-                        color: Colors.blue,
-                        textColor: Colors.white,
-                        disabledColor: Colors.grey,
-                        disabledTextColor: Colors.black,
-                        padding: EdgeInsets.all(8.0),
-                        splashColor: Colors.blueAccent,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Login(title: "Login Page")),
-                          );
-                        },
-                        child: Text("Login"),
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      disabledColor: Colors.grey,
+                      disabledTextColor: Colors.black,
+                      padding: EdgeInsets.all(8.0),
+                      splashColor: Colors.blueAccent,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Login(title: "Login Page")),
+                        );
+                      },
+                      child: Text("Login"),
                     );
                   }
                 },
@@ -107,7 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       MaterialPageRoute(builder: (context) => SearchUsers()),
                     );
                   },
-                  child: Text("Search"))
+                  child: Text("Search"),
+              ),
+              Checkbox(
+                  value: themeChange.darkTheme,
+                  onChanged: (bool value) {
+                    themeChange.darkTheme = value;
+                },
+              )
             ],
           ),
         ),
@@ -115,49 +142,26 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _getLandingPage() {
-    return StreamBuilder<FirebaseUser>(
-      stream: FirebaseAuth.instance.onAuthStateChanged,
-      builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data.providerData.length ==
-              1) { // logged in using email and password
-            return PersonalLogPage(snapshot.data.displayName, new FFLogZones());
-//          }
-            //else { // logged in using other providers
-//            return MainPage();
-//          }
-          } else {
-            return Login(title: "Login Page");
-          }
-        }else {
-          return MyHomePage(title: 'FFXIV Battle Logs');
-        }
-      },
-    );
-  }
-
   Future<Widget> showLoginOrHomePageButton() async {
     FirebaseUser user = await _auth.getCurrentUser();
 
-    if(user == null) {
+    if (user == null) {
       return FlatButton(
-          color: Colors.blue,
-          textColor: Colors.white,
-          disabledColor: Colors.grey,
-          disabledTextColor: Colors.black,
-          padding: EdgeInsets.all(8.0),
-          splashColor: Colors.blueAccent,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Login(title: "Login Page")),
-            );
-          },
-          child: Text("Login"),
+        color: Colors.blue,
+        textColor: Colors.white,
+        disabledColor: Colors.grey,
+        disabledTextColor: Colors.black,
+        padding: EdgeInsets.all(8.0),
+        splashColor: Colors.blueAccent,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Login(title: "Login Page")),
+          );
+        },
+        child: Text("Login"),
       );
-    }else {
+    } else {
       return FlatButton(
           color: Colors.blue,
           textColor: Colors.white,
@@ -169,7 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PersonalLogPage(user.displayName, new FFLogZones())),
+                  builder: (context) =>
+                      PersonalLogPage(user.displayName, new FFLogZones())),
             );
           },
           child: Text("Home page"));

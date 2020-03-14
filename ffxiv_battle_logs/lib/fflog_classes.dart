@@ -320,7 +320,7 @@ class FFLogSummaryEvent {
 }
 
 class FFLogDamageDoneEvent {
-  final int timeStamp;
+  final int timeStamp; //when was it used
   final String type;
   final int sourceID; //Who used it
   final Ability ability;
