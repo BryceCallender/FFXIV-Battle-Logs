@@ -318,23 +318,23 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
         },
       ));
 
-      hpsChartData.add(
-        new charts.Series(
-          id: "Overheal %",
-          data: sortedByPartyWidgetHPSInfo,
-          domainFn: (HPSInfo hps, _) => hps.user,
-          measureFn: ((HPSInfo hps, _) => hps.overhealPercentage),
-          colorFn: ((HPSInfo hps, _) => hps.color),
-          labelAccessorFn: (HPSInfo hps, _) =>
-              "Overheal: ${hps.overhealPercentage.toStringAsFixed(1)}%",
-          insideLabelStyleAccessorFn: (HPSInfo hps, _) {
-            return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
-          },
-          outsideLabelStyleAccessorFn: (HPSInfo hps, _) {
-            return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
-          },
-        ),
-      );
+//      hpsChartData.add(
+//        new charts.Series(
+//          id: "Overheal %",
+//          data: sortedByPartyWidgetHPSInfo,
+//          domainFn: (HPSInfo hps, _) => hps.user,
+//          measureFn: ((HPSInfo hps, _) => hps.overhealPercentage),
+//          colorFn: ((HPSInfo hps, _) => hps.color),
+//          labelAccessorFn: (HPSInfo hps, _) =>
+//              "Overheal: ${hps.overhealPercentage.toStringAsFixed(1)}%",
+//          insideLabelStyleAccessorFn: (HPSInfo hps, _) {
+//            return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
+//          },
+//          outsideLabelStyleAccessorFn: (HPSInfo hps, _) {
+//            return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
+//          },
+//        ),
+//      );
 
       hpsData = hpsChartData;
 

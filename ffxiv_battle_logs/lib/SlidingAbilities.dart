@@ -24,7 +24,7 @@ class SlidingAbilityState extends State<SlidingAbilities>
     );
     _offsetAnimation = Tween<Offset>(
       begin: Offset(1.0, widget.heightSlide),
-      end: Offset(-10, widget.heightSlide),
+      end: Offset(-10.0, widget.heightSlide),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.linear,
@@ -32,18 +32,17 @@ class SlidingAbilityState extends State<SlidingAbilities>
 
     _controller.forward();
 
-
-    _offsetAnimation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-          dispose();
+    _controller.addStatusListener((status) {
+      if(status == AnimationStatus.completed) {
+        dispose();
       }
     });
   }
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override

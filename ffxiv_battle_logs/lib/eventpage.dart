@@ -41,6 +41,7 @@ class _EventPageState extends State<EventPage> {
   String currentDPSTime = "";
 
   List<SlidingAbilities> usedAbilities = [];
+  List<Widget> textTimeEvents = [];
 
   final AsyncMemoizer<List<FFLogDamageDoneEvent>> _memoizer = AsyncMemoizer();
 
@@ -70,7 +71,7 @@ class _EventPageState extends State<EventPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.playerName}'s events"),
+        title: Text("${widget.playerName}'s real time events"),
       ),
       body: ListView(
         children: [
@@ -87,6 +88,7 @@ class _EventPageState extends State<EventPage> {
             child: Stack(
                 alignment: Alignment.centerRight, children: usedAbilities),
           ),
+          SizedBox(height: 50),
           FutureBuilder(
             future: getEventData(),
             builder: (context, snapshot) {
@@ -106,19 +108,15 @@ class _EventPageState extends State<EventPage> {
 
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-//                return ListView.builder(
-//                  itemCount: snapshot.data.length,
-//                  itemBuilder: (context, index) {
-//                    return Image.asset(
-//                      "assets/images/class_action_icons/" +
-//                          snapshot.data[index].ability.abilityIcon,
-//                      width: 40,
-//                      height: 40,
-//                    );
-//                  },
-//                  shrinkWrap: true,
-//                );
-                return Container();
+                return Center(
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: textTimeEvents,
+                    ),
+                  ),
+                );
               } else {
                 return Container();
               }
@@ -155,112 +153,154 @@ class _EventPageState extends State<EventPage> {
   }
 
   void calculateDPSFromEvents(List<FFLogDamageDoneEvent> eventData) async {
-    eventData = eventData.where((event) => event.type == "damage" && event.sourceID == widget.sourceID).toList();
-    int currentTime = 0;
-    int startTime = widget.start;
+    eventData = eventData
+        .where((event) =>
+            (event.type == "damage") && event.sourceID == widget.sourceID)
+        .toList();
+
     int totalDamage = 0;
-//    int eventIndex = 0;
-
-//    while(currentMillis < widget.end && eventIndex < eventData.length) {
-//      //If we have data
-//      if (eventData.isNotEmpty) {
-//        //grab and store the data
-//        FFLogDamageDoneEvent event = eventData[eventIndex];
-//        //If we hit the event we want to display it
-//        if (currentMillis == event.timeStamp) {
-//          setState(() {
-//            totalDamage += event.amount;
-//            int eventTime = event.timeStamp - widget.start;
-//            int second = (eventTime ~/ 1000);
-//            if(second != 0) {
-//              currentDPSData.DPS = totalDamage ~/ second;
-//            }
-//            Duration duration = new Duration(milliseconds: (currentMillis - widget.start));
-//            currentDPSTime =
-//                duration
-//                    .toString()
-//                    .split('.')
-//                    .first
-//                    .padLeft(8, "0");
-//            print("DPS: ${currentDPSData.DPS} Time: $currentDPSTime");
-//            eventIndex++;
-//          });
-//        }else { //It was not equal therefore we can go to the next millisecond
-//          await Future.delayed(Duration(milliseconds: 1));
-//          currentMillis++;
-//        }
-//      }
-//    }
-
-    for (FFLogDamageDoneEvent event in eventData) {
-      int eventTime = event.timeStamp - startTime;
-      int second = (eventTime ~/ 1000);
-      print(second);
-      print(event.ability.name +
-          " was used with " +
-          event.amount.toString() +
-          " damage");
-      totalDamage += event.amount;
-
-      for(; currentTime < second; currentTime++) {
-        setState(() {
-          Duration duration = new Duration(seconds: currentTime);
-          currentDPSTime =
-              duration.toString().split('.').first.padLeft(8, "0");
-        });
-        await Future.delayed(Duration(seconds: 1));
-      }
-
-      if (currentTime == second) {
-        setState(() {
-          currentDPSData.DPS = totalDamage ~/ second;
-          Duration duration = new Duration(seconds: currentTime);
-          currentDPSTime =
-              duration.toString().split('.').first.padLeft(8, "0");
-          print("DPS: ${currentDPSData.DPS} Time: $currentDPSTime");
-        });
-      }
-    }
-
-    setState(() {
-      //Find out the totalDamage at the end of everything even after dying
-      currentDPSData.DPS = totalDamage ~/ ((widget.end - widget.start) / 1000);
-      print("Final DPS: ${currentDPSData.DPS}");
-    });
-  }
-
-  void showSkillsFromEvents(List<FFLogDamageDoneEvent> eventData) async {
-    eventData = eventData.where((event) => event.type == "cast" && event.sourceID == widget.sourceID).toList();
-    double heightSlide = 0.0;
     int eventIndex = 0;
-    int currentMillis = widget.start;
-    int previousEventMillis = 0;
 
-    while(currentMillis < widget.end && eventIndex < eventData.length) {
+    int currentMillis = widget.start;
+
+    while (currentMillis < widget.end && eventIndex < eventData.length) {
       //If we have data
       if (eventData.isNotEmpty) {
         //grab and store the data
         FFLogDamageDoneEvent event = eventData[eventIndex];
         //If we hit the event we want to display it
         if (currentMillis == event.timeStamp) {
+          if (event.type == "damage") {
+            setState(() {
+              totalDamage += event.amount;
+              int eventTime = event.timeStamp - widget.start;
+              int second = (eventTime ~/ 1000);
+              if (second != 0) {
+                currentDPSData.DPS = totalDamage ~/ second;
+              }
+              Duration duration =
+                  new Duration(milliseconds: (currentMillis - widget.start));
+              currentDPSTime =
+                  duration.toString().split('.').first.padLeft(8, "0");
+
+              textTimeEvents.add(Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text("[${duration.toString().split('.').first.padLeft(8, "0")}]: "),
+                  Image.asset(
+                      "assets/images/class_action_icons/${event.ability.abilityIcon}"),
+                  Text(" hit for ${event.amount}")
+                ],
+              ));
+              //print("DPS: ${currentDPSData.DPS} Time: $currentDPSTime");
+            });
+          }
+          eventIndex++;
+        } else {
+          //Update the build since its a new second so lets just update the time
+          if(currentMillis % 1000 == 0) {
+            setState(() {
+              Duration duration =
+              new Duration(milliseconds: (currentMillis - widget.start));
+              currentDPSTime =
+                  duration.toString().split('.').first.padLeft(8, "0");
+            });
+          }
+          //It was not equal therefore we can go to the next millisecond
+          await Future.delayed(Duration(milliseconds: 1));
+          currentMillis++;
+        }
+      }
+    }
+
+    //Good code for a second per tick
+//    for (FFLogDamageDoneEvent event in eventData) {
+//      int eventTime = event.timeStamp - startTime;
+//      int second = (eventTime ~/ 1000);
+////      print(second);
+////      print(event.ability.name +
+////          " was used with " +
+////          event.amount.toString() +
+////          " damage");
+//      totalDamage += event.amount;
+//
+//      for (; currentTime < second; currentTime++) {
+//        setState(() {
+//          Duration duration = new Duration(seconds: currentTime);
+//          currentDPSTime = duration.toString().split('.').first.padLeft(8, "0");
+//        });
+//        await Future.delayed(Duration(seconds: 1));
+//      }
+//
+//      if (currentTime == second) {
+//        setState(() {
+//          if (second != 0) {
+//            currentDPSData.DPS = totalDamage ~/ second;
+//          }
+//          Duration duration = new Duration(seconds: currentTime);
+//          currentDPSTime = duration.toString().split('.').first.padLeft(8, "0");
+//          //print("DPS: ${currentDPSData.DPS} Time: $currentDPSTime");
+//        });
+//      }
+//    }
+
+    setState(() {
+      //Find out the totalDamage at the end of everything even after dying
+      currentDPSData.DPS = totalDamage ~/ ((widget.end - widget.start) / 1000);
+      //print("Final DPS: ${currentDPSData.DPS}");
+    });
+  }
+
+  void showSkillsFromEvents(List<FFLogDamageDoneEvent> eventData) async {
+    eventData = eventData
+        .where((event) =>
+            event.type == "cast" && event.sourceID == widget.sourceID)
+        .toList();
+    double heightSlide = 0.0;
+    int eventIndex = 0;
+    int currentMillis = widget.start;
+    int previousEventMillis = 0;
+
+    while (currentMillis < widget.end && eventIndex < eventData.length) {
+      //If we have data
+      if (eventData.isNotEmpty) {
+        //grab and store the data
+        FFLogDamageDoneEvent event = eventData[eventIndex];
+        //If we hit the event we want to display it
+        if (currentMillis == event.timeStamp) {
+          Duration duration =
+              new Duration(milliseconds: (currentMillis - widget.start));
+          textTimeEvents.add(Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                  "[${duration.toString().split('.').first.padLeft(8, "0")}]: ${widget.playerName} casted "),
+              Image.asset(
+                  "assets/images/class_action_icons/${event.ability.abilityIcon}")
+            ],
+          ));
           //If something before it matches the time close by (weaving or auto on same time event)
-          if((currentMillis - previousEventMillis).abs() < 100) {
+          if ((currentMillis - previousEventMillis).abs() < 100) {
             heightSlide += 1.0;
-          }else {
+          } else {
             heightSlide = 0.0;
           }
-          print("Casted: ${event.ability.name}");
+          //print("Casted: ${event.ability.name}");
           setState(() {
             usedAbilities.add(SlidingAbilities(
-              abilityPath: "assets/images/class_action_icons/${event.ability.abilityIcon}",
+              abilityPath:
+                  "assets/images/class_action_icons/${event.ability.abilityIcon}",
               heightSlide: heightSlide,
             ));
           });
           previousEventMillis = currentMillis;
           eventIndex++;
-        }else { //It was not equal therefore we can go to the next millisecond
-          await Future.delayed(Duration(milliseconds: 1));
+        } else {
           currentMillis++;
+          //It was not equal therefore we can go to the next millisecond
+          await Future.delayed(Duration(milliseconds: 1));
         }
       }
     }

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/ff_logfights_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -19,6 +21,7 @@ class PersonalLogPage extends StatefulWidget {
 }
 
 class _MyPersonalLogPage extends State<PersonalLogPage> {
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -29,6 +32,30 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.userName + " Personal Logs")),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text(FirebaseAuthentication.currentUser.displayName),
+              accountEmail: Text(FirebaseAuthentication.currentUser.email),
+              currentAccountPicture: CircleAvatar(
+                child: Icon(Icons.account_circle)
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text('Profile'),
+              trailing: Icon(Icons.keyboard_arrow_right),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              trailing: Icon(Icons.keyboard_arrow_right),
+            ),
+          ],
+        ),
+      ),
       body: FutureBuilder(
           future: getReports(),
           builder: (context, snapshot) {
@@ -70,9 +97,11 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                                   maxWidth: 64,
                                   maxHeight: 64,
                                 ),
-                                child: Image.asset(widget.zoneData.isZoneExtreme(snapshot.data[index].zone) ?
-                                    "assets/images/map_icons/060000/060834.png":
-                                    "assets/images/map_icons/060000/060855.png",
+                                child: Image.asset(
+                                    widget.zoneData.isZoneExtreme(
+                                            snapshot.data[index].zone)
+                                        ? "assets/images/map_icons/060000/060834.png"
+                                        : "assets/images/map_icons/060000/060855.png",
                                     fit: BoxFit.cover),
                               ),
                               title: Text(widget.zoneData
@@ -100,7 +129,30 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
             }
             return Container();
           }),
-    );
+    bottomNavigationBar: BottomNavigationBar(
+      onTap: onBarItemTapped, // new
+      currentIndex: _currentIndex, // new
+      items: [
+        BottomNavigationBarItem(
+          icon: new Icon(Icons.home),
+          title: new Text('Home'),
+        ),
+        BottomNavigationBarItem(
+          icon: new Icon(Icons.search),
+          title: new Text('Search'),
+        ),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            title: Text('Profile')
+        )
+      ],
+    ),);
+  }
+
+  void onBarItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   Future<List<FFLogReport>> getReports() async {

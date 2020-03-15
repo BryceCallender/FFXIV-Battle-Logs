@@ -19,6 +19,8 @@ class FirebaseAuthentication implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String errorMessage = "";
 
+  static FirebaseUser currentUser;
+
   Future<FirebaseUser> signIn(String email, String password) async {
     try {
       AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
@@ -60,8 +62,8 @@ class FirebaseAuthentication implements BaseAuth {
   }
 
   Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user;
+    currentUser = await _firebaseAuth.currentUser();
+    return currentUser;
   }
 
   Future<void> signOut() async {
