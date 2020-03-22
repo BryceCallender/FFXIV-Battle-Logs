@@ -1,45 +1,37 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:ffxiv_battle_logs/authentication.dart';
+import 'package:ffxiv_battle_logs/ff_logfights_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import 'ff_logfights_page.dart';
 import 'fflog_classes.dart';
-import 'package:http/http.dart' as http;
 
-class SearchResults extends StatelessWidget {
-  final String characterName;
-  final String serverName;
-  final String serverRegion;
-  final int zoneNumber;
+class PersonalLogPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyPersonalLogPage();
 
-  FFLogZones zoneData = FFLogZones();
+  final FFLogZones zoneData;
+  final String userName;
 
-  SearchResults(this.characterName, this.serverName, this.serverRegion,
-      {this.zoneNumber = 33});
+  PersonalLogPage(this.userName, this.zoneData);
+}
+
+class _MyPersonalLogPage extends State<PersonalLogPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
-        ios: (_) => CupertinoNavigationBarData(
-          title: Text("Results for: $characterName")
-        ),
-      ),
-//      appBar: AppBar(
-//        title: Text("Results for: $characterName"),
-//      ),
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.userName + " Personal Logs")),
       body: FutureBuilder(
         future: getReports(),
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.done && snapshot.data == null) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("The search for $characterName returned no results. Either the name is incorrect or there is no logs under this username!"),
-            );
-          }
-
           if (snapshot.connectionState == ConnectionState.none &&
               snapshot.hasData == null) {
             return Container();
@@ -79,30 +71,25 @@ class SearchResults extends StatelessWidget {
                                 maxHeight: 64,
                               ),
                               child: Image.asset(
-                                  snapshot.data[index].difficulty == 100
+                                  widget.zoneData.isZoneExtreme(
+                                          snapshot.data[index].zone)
                                       ? "assets/images/map_icons/060000/060834.png"
                                       : "assets/images/map_icons/060000/060855.png",
                                   fit: BoxFit.cover),
                             ),
-                            title: Text(snapshot.data[index].encounterName),
+                            title: Text(widget.zoneData
+                                .zoneIDToName(snapshot.data[index].zone)),
                             subtitle: Text("Date Logged: " +
                                 DateFormat.yMMMMd().add_jm().format(
                                     DateTime.fromMillisecondsSinceEpoch(
-                                        snapshot.data[index].startTime))),
+                                        snapshot.data[index].start))),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                    FFLogParseReport reportData = snapshot.data[index];
-                                    FFLogReport parseToReport = FFLogReport(id: reportData.reportID,
-                                        title: reportData.encounterName,
-                                        start: reportData.startTime,
-                                        end: reportData.startTime + reportData.duration,
-                                        zone: zoneNumber);
-
-                                return FFLogFightsPage(
-                                    report: parseToReport);
-                              }));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FFLogFightsPage(
+                                          report: snapshot.data[index])));
                             },
                           ),
                         ],
@@ -119,19 +106,18 @@ class SearchResults extends StatelessWidget {
     );
   }
 
-  Future<List<FFLogParseReport>> getReports() async {
-    List<FFLogParseReport> reports = [];
+  Future<List<FFLogReport>> getReports() async {
+    List<FFLogReport> reports = [];
 
     http.Response response = await http.get(
-        "https://www.fflogs.com/v1/parses/character/$characterName/$serverName/$serverRegion" +
-            "?zone=$zoneNumber&api_key=a468c182a1d6b2464526fb12ce56044f");
+        "https://www.fflogs.com/v1/reports/user/" +
+            widget.userName +
+            "?api_key=a468c182a1d6b2464526fb12ce56044f");
 
     var reportList = jsonDecode(response.body) as List;
 
-    print(reportList);
-
     for (int i = 0; i < reportList.length; i++) {
-      reports.add(FFLogParseReport.fromJson(reportList[i]));
+      reports.add(FFLogReport.fromJson(reportList[i]));
     }
 
     return reports;

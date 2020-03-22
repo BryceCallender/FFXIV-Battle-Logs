@@ -25,6 +25,61 @@ class FFXIVClass {
 
     print(priority.toString() + " " + name);
   }
+
+  static String classToColor(String className) {
+    switch (className) {
+      case "Summoner":
+        return "#53997a";
+
+      case "Ninja":
+        return "#a02c62";
+
+      case "Samurai":
+        return "#d5732c";
+
+      case "BlackMage":
+        return "#9e7cd0";
+
+      case "Monk":
+        return "#ce9e35";
+
+      case "Machinist":
+        return "#8cded6";
+
+      case "Dragoon":
+        return "#4964c6";
+
+      case "RedMage":
+        return "#da817e";
+
+      case "Dancer":
+        return "#dab3b0";
+
+      case "Bard":
+        return "#9ab86a";
+
+      case "Warrior":
+        return "#b8362b";
+
+      case "Gunbreaker":
+        return "#776d39";
+
+      case "DarkKnight":
+        return "#bf3cc6";
+
+      case "Paladin":
+        return "#b1d1e4";
+
+      case "Astrologian":
+        return "#fbe768";
+
+      case "WhiteMage":
+        return "#fdf1de";
+
+      case "Scholar":
+        return "#7f5ef6";
+    }
+  }
 }
 
 class FFXIVCharacter {

@@ -34,12 +34,12 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
   List<charts.Series<DPSInfo, String>> dpsData;
   List<charts.Series<HPSInfo, String>> hpsData;
 
-  DarkThemeProvider themeColor;
+  var brightness;
 
   @override
   Widget build(BuildContext context) {
-    themeColor = Provider.of<DarkThemeProvider>(context);
-    print("Dark theme: " + themeColor.darkTheme.toString());
+    brightness = MediaQuery.of(context).platformBrightness;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Fight #" + widget.ffLogFightData.id.toString()),
@@ -202,7 +202,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
               DPS: dps,
               rDPS: rdps,
               color: charts.Color.fromHex(
-                  code: classToColor(player["type"] as String))));
+                  code: FFXIVClass.classToColor(player["type"] as String))));
         }
       });
 
@@ -226,7 +226,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
         outsideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
-          return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
+          return new charts.TextStyleSpec(color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black);
         },
       ));
 
@@ -243,7 +243,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
             return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
           },
           outsideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
-            return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
+            return new charts.TextStyleSpec(color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black);
           },
         ),
       );
@@ -290,7 +290,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
               HPS: hps,
               overhealPercentage: overheal,
               color: charts.Color.fromHex(
-                  code: classToColor(player["type"] as String))));
+                  code: FFXIVClass.classToColor(player["type"] as String))));
         }
       });
 
@@ -314,7 +314,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
         outsideLabelStyleAccessorFn: (HPSInfo hps, _) {
-          return new charts.TextStyleSpec(color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black);
+          return new charts.TextStyleSpec(color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black);
         },
       ));
 
@@ -347,61 +347,6 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
       return dpsData;
     }else {
       return hpsData;
-    }
-  }
-
-  String classToColor(String className) {
-    switch (className) {
-      case "Summoner":
-        return "#53997a";
-
-      case "Ninja":
-        return "#a02c62";
-
-      case "Samurai":
-        return "#d5732c";
-
-      case "BlackMage":
-        return "#9e7cd0";
-
-      case "Monk":
-        return "#ce9e35";
-
-      case "Machinist":
-        return "#8cded6";
-
-      case "Dragoon":
-        return "#4964c6";
-
-      case "RedMage":
-        return "#da817e";
-
-      case "Dancer":
-        return "#dab3b0";
-
-      case "Bard":
-        return "#9ab86a";
-
-      case "Warrior":
-        return "#b8362b";
-
-      case "Gunbreaker":
-        return "#776d39";
-
-      case "DarkKnight":
-        return "#bf3cc6";
-
-      case "Paladin":
-        return "#b1d1e4";
-
-      case "Astrologian":
-        return "#fbe768";
-
-      case "WhiteMage":
-        return "#fdf1de";
-
-      case "Scholar":
-        return "#7f5ef6";
     }
   }
 }

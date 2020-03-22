@@ -12,7 +12,7 @@ class FadingTextWidget extends StatefulWidget {
 }
 
 class _FadingTextWidgetState extends State<FadingTextWidget> with SingleTickerProviderStateMixin {
-  static const List<String> textToShow = ["DPS", "HPS", "Check FF Logs"];
+  static const List<String> textToShow = ["Check your FF Log Reports", "Analyze DPS and HPS", "Watch your events unfold skill by skill", "Search for others"];
 
   AnimationController _controller;
   Animation _animation;

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:provider/provider.dart';
-
-import 'darkthemepreference.dart';
 
 class ReportDataChart extends StatefulWidget {
   final List<charts.Series> seriesList;
@@ -16,11 +13,11 @@ class ReportDataChart extends StatefulWidget {
 }
 
 class _ReportDataChartState extends State<ReportDataChart> {
-  DarkThemeProvider themeColor;
 
   @override
   Widget build(BuildContext context) {
-    themeColor = Provider.of<DarkThemeProvider>(context);
+    var brightness = MediaQuery.of(context).platformBrightness;
+
     return new charts.BarChart(
       widget.seriesList,
       animate: widget.animate,
@@ -33,11 +30,11 @@ class _ReportDataChartState extends State<ReportDataChart> {
           renderSpec: new charts.SmallTickRendererSpec(
             // Tick and Label styling here.
               labelStyle: new charts.TextStyleSpec(
-                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+                  color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black),
 
               // Change the line colors to match text color.
               lineStyle: new charts.LineStyleSpec(
-                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+                  color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black),
           )
       ),
       /// Assign a custom style for the measure axis.
@@ -46,11 +43,11 @@ class _ReportDataChartState extends State<ReportDataChart> {
 
             // Tick and Label styling here.
               labelStyle: new charts.TextStyleSpec(
-                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+                  color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black),
 
               // Change the line colors to match text color.
               lineStyle: new charts.LineStyleSpec(
-                  color: themeColor.darkTheme? charts.MaterialPalette.white : charts.MaterialPalette.black),
+                  color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black),
           ),
       ),
     );

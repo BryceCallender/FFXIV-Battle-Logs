@@ -40,31 +40,10 @@ class FFXIVPartySection extends StatelessWidget {
           fit: BoxFit.contain,
         ),
       ),
-      Text("Tanks"),
-      ListTile(
-        title: Text(ffxivParty.characters[0].name),
-        leading: Image.asset(ffxivParty.characters[0].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return EventPage(ffxivParty.characters[0].name, reportID, start,
-                    end, ffxivParty.characters[0].sourceID);
-              },
-            ),
-          );
-        },
-      ),
-    ];
-
-    if (partyCount == 8) {
-      builder.add(
-        ListTile(
-          title: Text(ffxivParty.characters[1].name),
-          leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
+      Card(
+        child: ListTile(
+          title: Text(ffxivParty.characters[0].name),
+          leading: Image.asset(ffxivParty.characters[0].playerClass.iconPath,
               width: icon_size, height: icon_size),
           trailing: Icon(Icons.keyboard_arrow_right),
           onTap: () {
@@ -72,12 +51,38 @@ class FFXIVPartySection extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return EventPage(ffxivParty.characters[1].name, reportID,
-                      start, end, ffxivParty.characters[1].sourceID);
+                  return EventPage(ffxivParty.characters[0].name, reportID,
+                      ffxivParty.characters[0].playerClass.name,
+                      start, end, ffxivParty.characters[0].sourceID);
                 },
               ),
             );
           },
+        ),
+      ),
+    ];
+
+    if (partyCount == 8) {
+      builder.add(
+        Card(
+          child: ListTile(
+            title: Text(ffxivParty.characters[1].name),
+            leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return EventPage(ffxivParty.characters[1].name, reportID,
+                        ffxivParty.characters[1].playerClass.name,
+                        start, end, ffxivParty.characters[1].sourceID);
+                  },
+                ),
+              );
+            },
+          ),
         ),
       );
     }
@@ -99,49 +104,11 @@ class FFXIVPartySection extends StatelessWidget {
       ),
     );
 
-    builder.add(Text("Healers"));
-
     if (partyCount == 4) {
-      builder.add(ListTile(
-        title: Text(ffxivParty.characters[1].name),
-        leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return EventPage(ffxivParty.characters[1].name, reportID,
-                    start, end, ffxivParty.characters[1].sourceID);
-              },
-            ),
-          );
-        },
-      ),);
-    } else if (partyCount == 8) {
-      builder.add(ListTile(
-        title: Text(ffxivParty.characters[2].name),
-        leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return EventPage(ffxivParty.characters[2].name, reportID,
-                    start, end, ffxivParty.characters[2].sourceID);
-              },
-            ),
-          );
-        },
-      ),);
-
-      builder.add(
-        ListTile(
-          title: Text(ffxivParty.characters[3].name),
-          leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
+      builder.add(Card(
+        child: ListTile(
+          title: Text(ffxivParty.characters[1].name),
+          leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
               width: icon_size, height: icon_size),
           trailing: Icon(Icons.keyboard_arrow_right),
           onTap: () {
@@ -149,12 +116,57 @@ class FFXIVPartySection extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return EventPage(ffxivParty.characters[4].name, reportID,
-                      start, end, ffxivParty.characters[4].sourceID);
+                  return EventPage(ffxivParty.characters[1].name, reportID,
+                      ffxivParty.characters[1].playerClass.name,
+                      start, end, ffxivParty.characters[1].sourceID);
                 },
               ),
             );
           },
+        ),
+      ),);
+    } else if (partyCount == 8) {
+      builder.add(Card(
+        child: ListTile(
+          title: Text(ffxivParty.characters[2].name),
+          leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
+              width: icon_size, height: icon_size),
+          trailing: Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return EventPage(ffxivParty.characters[2].name, reportID,
+                      ffxivParty.characters[2].playerClass.name,
+                      start, end, ffxivParty.characters[2].sourceID);
+                },
+              ),
+            );
+          },
+        ),
+      ),);
+
+      builder.add(
+        Card(
+          child: ListTile(
+            title: Text(ffxivParty.characters[3].name),
+            leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return EventPage(ffxivParty.characters[4].name, reportID,
+                        ffxivParty.characters[4].playerClass.name,
+                        start, end, ffxivParty.characters[4].sourceID);
+                  },
+                ),
+              );
+            },
+          ),
         ),
       );
     }
@@ -174,31 +186,11 @@ class FFXIVPartySection extends StatelessWidget {
       ),
     ));
 
-    builder.add(Text("DPS"));
-
     if (partyCount == 4) {
-      builder.add(ListTile(
-        title: Text(ffxivParty.characters[2].name),
-        leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return EventPage(ffxivParty.characters[2].name, reportID,
-                    start, end, ffxivParty.characters[2].sourceID);
-              },
-            ),
-          );
-        },
-      ),);
-
-      builder.add(
-        ListTile(
-          title: Text(ffxivParty.characters[3].name),
-          leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
+      builder.add(Card(
+        child: ListTile(
+          title: Text(ffxivParty.characters[2].name),
+          leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
               width: icon_size, height: icon_size),
           trailing: Icon(Icons.keyboard_arrow_right),
           onTap: () {
@@ -206,71 +198,43 @@ class FFXIVPartySection extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return EventPage(ffxivParty.characters[3].name, reportID,
-                      start, end, ffxivParty.characters[3].sourceID);
+                  return EventPage(ffxivParty.characters[2].name, reportID,
+                      ffxivParty.characters[2].playerClass.name,
+                      start, end, ffxivParty.characters[2].sourceID);
                 },
               ),
             );
           },
         ),
-      );
-    } else if (partyCount == 8) {
-      builder.add(ListTile(
-        title: Text(ffxivParty.characters[4].name),
-        leading: Image.asset(ffxivParty.characters[4].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return EventPage(ffxivParty.characters[4].name, reportID,
-                    start, end, ffxivParty.characters[4].sourceID);
-              },
-            ),
-          );
-        },
-      ),);
-      builder.add(ListTile(
-        title: Text(ffxivParty.characters[5].name),
-        leading: Image.asset(ffxivParty.characters[5].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return EventPage(ffxivParty.characters[5].name, reportID,
-                    start, end, ffxivParty.characters[5].sourceID);
-              },
-            ),
-          );
-        },
-      ),);
-      builder.add(ListTile(
-        title: Text(ffxivParty.characters[6].name),
-        leading: Image.asset(ffxivParty.characters[6].playerClass.iconPath,
-            width: icon_size, height: icon_size),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return EventPage(ffxivParty.characters[6].name, reportID,
-                    start, end, ffxivParty.characters[6].sourceID);
-              },
-            ),
-          );
-        },
       ),);
 
       builder.add(
-        ListTile(
-          title: Text(ffxivParty.characters[7].name),
-          leading: Image.asset(ffxivParty.characters[7].playerClass.iconPath,
+        Card(
+          child: ListTile(
+            title: Text(ffxivParty.characters[3].name),
+            leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return EventPage(ffxivParty.characters[3].name, reportID,
+                        ffxivParty.characters[3].playerClass.name,
+                        start, end, ffxivParty.characters[3].sourceID);
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    } else if (partyCount == 8) {
+      builder.add(Card(
+        child: ListTile(
+          title: Text(ffxivParty.characters[4].name),
+          leading: Image.asset(ffxivParty.characters[4].playerClass.iconPath,
               width: icon_size, height: icon_size),
           trailing: Icon(Icons.keyboard_arrow_right),
           onTap: () {
@@ -278,12 +242,76 @@ class FFXIVPartySection extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return EventPage(ffxivParty.characters[7].name, reportID,
-                      start, end, ffxivParty.characters[7].sourceID);
+                  return EventPage(ffxivParty.characters[4].name, reportID,
+                      ffxivParty.characters[4].playerClass.name,
+                      start, end, ffxivParty.characters[4].sourceID);
                 },
               ),
             );
           },
+        ),
+      ),);
+      builder.add(Card(
+        child: ListTile(
+          title: Text(ffxivParty.characters[5].name),
+          leading: Image.asset(ffxivParty.characters[5].playerClass.iconPath,
+              width: icon_size, height: icon_size),
+          trailing: Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return EventPage(ffxivParty.characters[5].name, reportID,
+                      ffxivParty.characters[5].playerClass.name,
+                      start, end, ffxivParty.characters[5].sourceID);
+                },
+              ),
+            );
+          },
+        ),
+      ),);
+      builder.add(Card(
+        child: ListTile(
+          title: Text(ffxivParty.characters[6].name),
+          leading: Image.asset(ffxivParty.characters[6].playerClass.iconPath,
+              width: icon_size, height: icon_size),
+          trailing: Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return EventPage(ffxivParty.characters[6].name, reportID,
+                      ffxivParty.characters[6].playerClass.name,
+                      start, end, ffxivParty.characters[6].sourceID);
+                },
+              ),
+            );
+          },
+        ),
+      ),);
+
+      builder.add(
+        Card(
+          child: ListTile(
+            title: Text(ffxivParty.characters[7].name),
+            leading: Image.asset(ffxivParty.characters[7].playerClass.iconPath,
+                width: icon_size, height: icon_size),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return EventPage(ffxivParty.characters[7].name, reportID,
+                        ffxivParty.characters[7].playerClass.name,
+                        start, end, ffxivParty.characters[7].sourceID);
+                  },
+                ),
+              );
+            },
+          ),
         ),
       );
     }

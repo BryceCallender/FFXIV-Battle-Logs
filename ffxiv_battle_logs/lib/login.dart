@@ -1,6 +1,7 @@
 import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/home_page.dart';
+import 'package:ffxiv_battle_logs/personallog.dart';
 import 'package:ffxiv_battle_logs/register.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -130,8 +131,7 @@ class _LoginState extends State<Login> {
       if(user != null) {
         Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => PersonalLogPage(user.displayName, new FFLogZones())));
-
+            MaterialPageRoute(builder: (context) => HomePage(userName: user.displayName)));
       }
     }
   }
