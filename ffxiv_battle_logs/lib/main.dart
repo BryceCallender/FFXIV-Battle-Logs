@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
-        home: MyHomePage(title: 'FFXIV Battle Logs'),
+        home: MyHomePage(title: "FFXIV Battle Logs"),
       ),
     );
   }
@@ -86,6 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ios: (_) => CupertinoNavigationBarData(
             title: Text(widget.title),
             backgroundColor: CupertinoColors.activeBlue),
+        android: (_) => MaterialAppBarData(
+          title: Text(widget.title),
+          backgroundColor: Colors.blue
+        ),
       ),
       body: SafeArea(
         child: Container(
@@ -117,6 +121,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                         ),
                         android: (_) => MaterialRaisedButtonData(
+                          color: Colors.blue,
+                          splashColor: Colors.lightBlue,
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -144,6 +150,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                   android: (_) => MaterialRaisedButtonData(
+                    color: Colors.blue,
+                    splashColor: Colors.lightBlue,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -155,17 +163,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: SafeArea(
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            "FINAL FANTASY XIV ©️ 2010 - 2020 SQUARE ENIX CO., LTD. All Rights Reserved.",
-                            textAlign: TextAlign.center,
-                          )
-                        ],
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: SafeArea(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "FINAL FANTASY XIV ©️ 2010 - 2020 SQUARE ENIX CO., LTD. All Rights Reserved.",
+                              textAlign: TextAlign.center,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -196,6 +207,8 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
         android: (_) => MaterialRaisedButtonData(
+          color: Colors.blue,
+          splashColor: Colors.lightBlue,
           onPressed: () {
             Navigator.push(
               context,
@@ -220,6 +233,8 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
         android: (_) => MaterialRaisedButtonData(
+          color: Colors.blue,
+          splashColor: Colors.lightBlue,
           onPressed: () {
             Navigator.push(
               context,

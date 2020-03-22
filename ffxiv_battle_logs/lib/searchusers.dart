@@ -117,12 +117,16 @@ class _SearchUserStats extends State<SearchUsers> {
             child: PlatformTextField(
               controller: nameController,
               ios: (_) => CupertinoTextFieldData(
-                  keyboardType: TextInputType.text,
-                  prefix: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(CupertinoIcons.search),
-                  ),
-                  placeholder: "Character name"),
+                keyboardType: TextInputType.text,
+                prefix: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(CupertinoIcons.search),
+                ),
+                placeholder: "Character name"),
+              android: (_) => MaterialTextFieldData(
+                keyboardType: TextInputType.text,
+                controller: nameController,
+              ),
             ),
           ),
           ...platformPickers(),
@@ -139,7 +143,21 @@ class _SearchUserStats extends State<SearchUsers> {
                           zoneNumber: zoneID.item2),
                     ),
                   );
-                }),
+                },
+            ),
+            android: (_) => MaterialRaisedButtonData(
+              color: Colors.blue,
+              splashColor: Colors.lightBlue,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchResults(
+                    nameController.text, world, server,
+                    zoneNumber: zoneID.item2)),
+                );
+              }
+            ),
           ),
         ]),
       ),
@@ -253,56 +271,65 @@ class _SearchUserStats extends State<SearchUsers> {
       ];
     } else {
       return [
-        DropdownButton(
-          value: world,
-          isExpanded: true,
-          items: worlds.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              world = value;
-            });
-          },
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: DropdownButton(
+            value: world,
+            isExpanded: true,
+            items: worlds.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                world = value;
+              });
+            },
+          ),
         ),
-        DropdownButton(
-          value: server,
-          isExpanded: true,
-          items: servers.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              server = value;
-            });
-          },
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: DropdownButton(
+            value: server,
+            isExpanded: true,
+            items: servers.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                server = value;
+              });
+            },
+          ),
         ),
         FutureBuilder(
           future: ffLogZones.getZoneNamesAsync(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData) {
-              return DropdownButton(
-                value: zoneID,
-                isExpanded: true,
-                items: snapshot.data.map<DropdownMenuItem<Tuple2<String, int>>>(
-                    (Tuple2<String, int> value) {
-                  return DropdownMenuItem<Tuple2<String, int>>(
-                    value: value,
-                    child: Text(value.item1),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    zoneID = value;
-                  });
-                },
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: DropdownButton(
+                  value: zoneID,
+                  isExpanded: true,
+                  items: snapshot.data.map<DropdownMenuItem<Tuple2<String, int>>>(
+                      (Tuple2<String, int> value) {
+                    return DropdownMenuItem<Tuple2<String, int>>(
+                      value: value,
+                      child: Text(value.item1),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      zoneID = value;
+                    });
+                  },
+                ),
               );
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
@@ -311,20 +338,6 @@ class _SearchUserStats extends State<SearchUsers> {
             }
           },
         ),
-        RaisedButton(
-          child: Text("Search"),
-          color: Colors.blue,
-          onPressed: () {
-            print(
-                "Searching for ${nameController.text} in $server:$world with zone $zoneID");
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => SearchResults(
-                        nameController.text, world, server,
-                        zoneNumber: zoneID.item2)));
-          },
-        )
       ];
     }
   }
