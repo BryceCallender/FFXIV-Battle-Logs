@@ -3,9 +3,15 @@ import 'dart:convert';
 
 import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/specificfight.dart';
+import 'package:ffxiv_battle_logs/styles.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:flutter/foundation.dart' as foundation;
+
+bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
 
 class FFLogFightsPage extends StatelessWidget {
   final FFLogReport report;
@@ -14,9 +20,11 @@ class FFLogFightsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    var mediaQuery = MediaQuery.of(context);
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         title: Text(report.title),
+        backgroundColor: CupertinoColors.activeBlue,
       ),
       body: Container(
         child: FutureBuilder(
@@ -29,7 +37,7 @@ class FFLogFightsPage extends StatelessWidget {
 
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: PlatformCircularProgressIndicator(),
               );
             }
 
@@ -41,6 +49,9 @@ class FFLogFightsPage extends StatelessWidget {
                   return Container(
                     padding: EdgeInsets.only(top: 10.0),
                     child: Card(
+                      color: mediaQuery.platformBrightness == Brightness.dark
+                          ? ThemeData.dark().cardColor
+                          : ThemeData.light().cardColor,
                       child: Column(
                         children: <Widget>[
                           Container(
@@ -52,47 +63,84 @@ class FFLogFightsPage extends StatelessWidget {
                                             ? Colors.green
                                             : Colors.red)),
                             child: ListTile(
-                                dense: true, //maybe?
-                                leading: Image.asset(
-                                    "assets/images/banners/112000/" +
-                                        snapshot.data.ffLogFightData[index].name
-                                            .replaceAll(" ", "_") +
-                                        ".png"),
-                                title: Text(snapshot
-                                    .data.ffLogFightData[index].zoneName),
-                                subtitle:
-                                  Wrap(children: [
-                                    Text("Duration: " +
-                                    Duration(
-                                            milliseconds: (snapshot.data.ffLogFightData[index].end - snapshot.data.ffLogFightData[index].start))
-                                        .toString()
-                                        .split('.')
-                                        .first
-                                        .padLeft(8, "0")),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 3.0, bottom: 3.0),
-                                      child: Offstage(
-                                        offstage: snapshot.data.ffLogFightData[index].kill,
-                                        child: LinearPercentIndicator(
-                                          lineHeight: 16.0,
-                                          animation: true,
-                                          percent: (snapshot.data.ffLogFightData[index].bossPercentage / 10000),
-                                          backgroundColor: Colors.grey,
-                                          progressColor: getProgressColor(snapshot.data.ffLogFightData[index].bossPercentage / 100),
-                                          center: Text(
-                                            "${snapshot.data.ffLogFightData[index].bossPercentage / 100}% HP",
-                                            style: TextStyle(
+                              dense: true, //maybe?
+                              leading: Image.asset(
+                                  "assets/images/banners/112000/" +
+                                      snapshot.data.ffLogFightData[index].name
+                                          .replaceAll(" ", "_") +
+                                      ".png"),
+                              title: Text(
+                                  snapshot.data.ffLogFightData[index].zoneName,
+                                  style: Styles.getTextStyleFromBrightness(
+                                      context)),
+                              subtitle: Wrap(
+                                children: [
+                                  Text(
+                                      "Duration: " +
+                                          Duration(
+                                                  milliseconds: (snapshot
+                                                          .data
+                                                          .ffLogFightData[index]
+                                                          .end -
+                                                      snapshot
+                                                          .data
+                                                          .ffLogFightData[index]
+                                                          .start))
+                                              .toString()
+                                              .split('.')
+                                              .first
+                                              .padLeft(8, "0"),
+                                      style: Styles.getTextStyleFromBrightness(
+                                          context)),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 3.0, bottom: 3.0),
+                                    child: Offstage(
+                                      offstage: snapshot
+                                          .data.ffLogFightData[index].kill,
+                                      child: LinearPercentIndicator(
+                                        lineHeight: 16.0,
+                                        animation: true,
+                                        percent: (snapshot
+                                                .data
+                                                .ffLogFightData[index]
+                                                .bossPercentage /
+                                            10000),
+                                        backgroundColor: Colors.grey,
+                                        progressColor: getProgressColor(snapshot
+                                                .data
+                                                .ffLogFightData[index]
+                                                .bossPercentage /
+                                            100),
+                                        center: Text(
+                                          "${snapshot.data.ffLogFightData[index].bossPercentage / 100}% HP",
+                                          style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black
-                                            ),
-                                          ),
+                                              color: Colors.black),
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                trailing: Icon(Icons.keyboard_arrow_right),
-                                onTap: () {
+                                  ),
+                                ],
+                              ),
+                              trailing: isIOS
+                                  ? Icon(CupertinoIcons.forward)
+                                  : Icon(Icons.keyboard_arrow_right),
+                              onTap: () {
+                                if (isIOS) {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => SpecificFightReport(
+                                        ffLogFightData:
+                                            snapshot.data.ffLogFightData[index],
+                                        partyMembers:
+                                            snapshot.data.partyMembersInvolved,
+                                        reportID: report.id,
+                                      ),
+                                    ),
+                                  );
+                                } else {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -105,7 +153,8 @@ class FFLogFightsPage extends StatelessWidget {
                                       ),
                                     ),
                                   );
-                                },
+                                }
+                              },
                             ),
                           ),
                         ],
@@ -139,15 +188,15 @@ class FFLogFightsPage extends StatelessWidget {
   }
 
   Color getProgressColor(double progressPercent) {
-    if(progressPercent > 75) {
+    if (progressPercent > 75) {
       return Colors.white;
-    }else if(progressPercent <= 75 && progressPercent > 50) {
+    } else if (progressPercent <= 75 && progressPercent > 50) {
       return Colors.green;
-    }else if(progressPercent <= 50 && progressPercent > 20) {
+    } else if (progressPercent <= 50 && progressPercent > 20) {
       return Colors.blue;
-    }else if(progressPercent <= 20 && progressPercent > 10) {
+    } else if (progressPercent <= 20 && progressPercent > 10) {
       return Colors.deepPurpleAccent;
-    }else {
+    } else {
       return Colors.deepOrangeAccent;
     }
   }

@@ -2,14 +2,13 @@ import 'package:ffxiv_battle_logs/FFXIVPartySection.dart';
 import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/ffxiv_classes.dart';
 import 'package:ffxiv_battle_logs/report_data_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/rendering.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'dart:convert';
-
-import 'darkthemepreference.dart';
 
 class SpecificFightReport extends StatefulWidget {
   FFXIVParty ffxivParty;
@@ -40,9 +39,10 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
   Widget build(BuildContext context) {
     brightness = MediaQuery.of(context).platformBrightness;
 
-    return Scaffold(
-      appBar: AppBar(
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         title: Text("Fight #" + widget.ffLogFightData.id.toString()),
+        backgroundColor: CupertinoColors.activeBlue,
       ),
       body: ListView(
         children: [
@@ -56,7 +56,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: PlatformCircularProgressIndicator(),
                 );
               }
 
@@ -89,18 +89,18 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              RaisedButton(
-                  child: Text("DPS Stats"),
-                  color: Colors.red,
-                  onPressed: () {
-                    setState(() {
-                      chartName = "DPS And RDPS";
-                    });
-                  },
+              PlatformButton(
+                child: Text("DPS"),
+                color: CupertinoColors.destructiveRed,
+                onPressed: () {
+                  setState(() {
+                    chartName = "DPS And RDPS";
+                  });
+                },
               ),
               SizedBox(width: 15.0),
-              RaisedButton(
-                  child: Text("HPS Stats"),
+              PlatformButton(
+                  child: Text("HPS"),
                   color: Colors.green,
                   onPressed: () {
                     setState(() {
@@ -113,41 +113,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           Divider(
             thickness: 3.0,
           ),
-          getPartyWidget(),
-//          Text("Events"),
-//          FutureBuilder(
-//            future: getEventData(),
-//            builder: (context, snapshot) {
-//              if (snapshot.connectionState == ConnectionState.none &&
-//                  snapshot.hasData == null) {
-//                return Container();
-//              }
-//
-//              if (snapshot.connectionState == ConnectionState.waiting) {
-//                return Center(
-//                  child: CircularProgressIndicator(),
-//                );
-//              }
-//
-//              if (snapshot.connectionState == ConnectionState.done &&
-//                  snapshot.hasData) {
-//                return ListView.builder(
-//                  itemCount: snapshot.data.length,
-//                  itemBuilder: (context, index) {
-//                    return Image.asset(
-//                      "assets/images/class_action_icons/" +
-//                          snapshot.data[index].ability.abilityIcon,
-//                      width: 40,
-//                      height: 40,
-//                    );
-//                  },
-//                  shrinkWrap: true,
-//                );
-//              } else {
-//                return Container();
-//              }
-//            },
-//          ),
+          getPartyWidget()
         ],
       ),
     );

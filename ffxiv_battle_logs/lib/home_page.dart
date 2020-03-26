@@ -3,7 +3,9 @@ import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/personallog.dart';
 import 'package:ffxiv_battle_logs/profile_page.dart';
 import 'package:ffxiv_battle_logs/searchusers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class HomePage extends StatefulWidget {
   final String userName;
@@ -21,50 +23,43 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-//      appBar: AppBar(title: Text(widget.userName + " Personal Logs")),
-//      endDrawer: Drawer(
-//        child: ListView(
-//          padding: EdgeInsets.zero,
-//          children: <Widget>[
-//            UserAccountsDrawerHeader(
-//              accountName: Text(FirebaseAuthentication.currentUser.displayName),
-//              accountEmail: Text(FirebaseAuthentication.currentUser.email),
-//              currentAccountPicture: CircleAvatar(
-//                  child: Icon(Icons.account_circle)
-//              ),
-//            ),
-//            ListTile(
-//              leading: Icon(Icons.account_circle),
-//              title: Text('Profile'),
-//              trailing: Icon(Icons.keyboard_arrow_right),
-//            ),
-//            ListTile(
-//              leading: Icon(Icons.settings),
-//              title: Text('Settings'),
-//              trailing: Icon(Icons.keyboard_arrow_right),
-//            ),
-//          ],
-//        ),
-//      ),
+    return PlatformScaffold(
       body: widgets.elementAt(_currentIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onBarItemTapped, // new
-        currentIndex: _currentIndex, // new
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.search),
-            title: new Text('Search'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text('Profile')
-          ),
-        ],
+      bottomNavBar: PlatformNavBar(
+        itemChanged: onBarItemTapped,
+        currentIndex: _currentIndex,
+        ios: (_) => CupertinoTabBarData(
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(CupertinoIcons.home),
+              title: new Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(CupertinoIcons.search),
+              title: new Text('Search'),
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.person),
+                title: Text('Profile')
+            ),
+          ],
+        ),
+        android: (_) => MaterialNavBarData(
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.home),
+              title: new Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.search),
+              title: new Text('Search'),
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                title: Text('Profile')
+            ),
+          ],
+        ),
       ),
     );
   }

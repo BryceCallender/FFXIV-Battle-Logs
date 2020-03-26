@@ -37,4 +37,10 @@ class Styles {
       )
     );
   }
+
+  static TextStyle getTextStyleFromBrightness(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+
+    return TextStyle(color: brightness == Brightness.dark? Colors.white: Colors.black);
+  }
 }

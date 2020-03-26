@@ -29,6 +29,7 @@ class FirebaseAuthentication implements BaseAuth {
           email: email, password: password);
 
       FirebaseUser user = result.user;
+      currentUser = user;
       errorMessage = "";
       return user;
     }catch(exception) {

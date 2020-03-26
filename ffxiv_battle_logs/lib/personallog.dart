@@ -1,13 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/ff_logfights_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'styles.dart';
 
 import 'fflog_classes.dart';
+import 'package:flutter/foundation.dart' as foundation;
+
+bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
 
 class PersonalLogPage extends StatefulWidget {
   @override
@@ -27,8 +32,12 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.userName + " Personal Logs")),
+    var mediaQuery = MediaQuery.of(context);
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+        title: Text(widget.userName + " Personal Logs"),
+        backgroundColor: CupertinoColors.activeBlue,
+      ),
       body: FutureBuilder(
         future: getReports(),
         builder: (context, snapshot) {
@@ -39,7 +48,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: PlatformCircularProgressIndicator(),
             );
           }
 
@@ -60,6 +69,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                   return Container(
                     padding: EdgeInsets.only(top: 10.0),
                     child: Card(
+                      color: mediaQuery.platformBrightness == Brightness.dark? ThemeData.dark().cardColor: ThemeData.light().cardColor,
                       child: Column(
                         children: <Widget>[
                           ListTile(
@@ -78,18 +88,30 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                                   fit: BoxFit.cover),
                             ),
                             title: Text(widget.zoneData
-                                .zoneIDToName(snapshot.data[index].zone)),
+                                .zoneIDToName(snapshot.data[index].zone),
+                            style: Styles.getTextStyleFromBrightness(context)),
                             subtitle: Text("Date Logged: " +
                                 DateFormat.yMMMMd().add_jm().format(
                                     DateTime.fromMillisecondsSinceEpoch(
-                                        snapshot.data[index].start))),
-                            trailing: Icon(Icons.keyboard_arrow_right),
+                                        snapshot.data[index].start)),
+                                style: Styles.getTextStyleFromBrightness(context)),
+                            trailing: isIOS? Icon(CupertinoIcons.forward) : Icon(Icons.keyboard_arrow_right),
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => FFLogFightsPage(
-                                          report: snapshot.data[index])));
+                              if(isIOS) {
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (context) =>
+                                            FFLogFightsPage(
+                                                report: snapshot.data[index])));
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            FFLogFightsPage(
+                                                report: snapshot.data[index])));
+                              }
                             },
                           ),
                         ],

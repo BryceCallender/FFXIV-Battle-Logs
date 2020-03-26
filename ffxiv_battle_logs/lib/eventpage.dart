@@ -1,6 +1,8 @@
 import 'package:ffxiv_battle_logs/finaleventsystem.dart';
 import 'package:ffxiv_battle_logs/realtimeevent.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class DPSEvent {
   final String name;
@@ -38,9 +40,10 @@ class _EventPageState extends State<EventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         title: _currentIndex == 0? Text("${widget.playerName}'s events"): Text("${widget.playerName}'s real time events"),
+        backgroundColor: CupertinoColors.activeBlue,
       ),
       body: _currentIndex == 0?
       FinalEventSystem(playerName: widget.playerName,
@@ -57,9 +60,9 @@ class _EventPageState extends State<EventPage> {
         end: widget.end,
         sourceID: widget.sourceID,
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavBar: PlatformNavBar(
         currentIndex: _currentIndex,
-        onTap: onItemTapped,
+        itemChanged: onItemTapped,
         items: [
           BottomNavigationBarItem(
             icon: new Icon(Icons.flag),

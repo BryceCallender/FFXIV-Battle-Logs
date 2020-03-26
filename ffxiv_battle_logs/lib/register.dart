@@ -3,7 +3,13 @@ import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/personallog.dart';
 import 'package:ffxiv_battle_logs/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+
+import 'package:flutter/foundation.dart' as foundation;
+
+bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
 
 class Register extends StatefulWidget {
   @override
@@ -22,9 +28,10 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Scaffold(
-      appBar: AppBar(
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         title: Text("Register an account"),
+        backgroundColor: CupertinoColors.activeBlue,
       ),
       body: Builder(
         builder: (context) => Form(
@@ -84,26 +91,22 @@ class _RegisterState extends State<Register> {
                 },
                 onSaved: (value) => _password = value,
               ),
-              RaisedButton(
+              PlatformButton(
                 child: Text("Create my account"),
+                color: CupertinoColors.activeBlue,
                 onPressed: () async {
                   // Validate returns true if the form is valid, otherwise false.
                   if (_formKey.currentState.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
-
                     if(hasVerifiedFFLogUsername) {
                       Scaffold.of(context).showSnackBar(
                           SnackBar(content: Text('Processing Data')));
-
                       validateAndSubmit();
-
-
                     } else {
                       Scaffold.of(context).showSnackBar(
                           SnackBar(content: Text('Please verify your FF Log username and hit the checkbox')));
                     }
-
                   }
                 },
               )
@@ -130,10 +133,17 @@ class _RegisterState extends State<Register> {
       print("Logged in $user");
 
       if (user != null) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Login(title: "Login Page")));
+        if(isIOS) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  builder: (context) => Login(title: "Login Page")));
+        }else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Login(title: "Login Page")));
+        }
       }
     }
   }

@@ -1,11 +1,14 @@
 import 'package:ffxiv_battle_logs/authentication.dart';
-import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/home_page.dart';
-import 'package:ffxiv_battle_logs/personallog.dart';
 import 'package:ffxiv_battle_logs/register.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+
+import 'package:flutter/foundation.dart' as foundation;
+
+bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
 
 class Login extends StatefulWidget {
   final String title;
@@ -18,11 +21,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuthentication _auth = new FirebaseAuthentication();
 
-  String _email;
-  String _password;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -31,9 +33,10 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         title: Text(widget.title),
+        backgroundColor: CupertinoColors.activeBlue,
       ),
       body: Form(
         key: _formKey,
@@ -41,75 +44,70 @@ class _LoginState extends State<Login> {
           padding: EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Email',
+              PlatformTextField(
+                controller: emailController,
+              ),
+              PlatformTextField(
+                controller: passwordController,
+                obscureText: true,
+              ),
+//              TextFormField(
+//                  decoration: InputDecoration(
+//                    border: OutlineInputBorder(),
+//                    labelText: 'Email',
+//                  ),
+//                  validator: (value) {
+//
+//                  },
+//                  onSaved: (value) => _email = value.trim()),
+//              Padding(
+//                padding: EdgeInsets.only(top: 10.0),
+//                child: TextFormField(
+//                    obscureText: true,
+//                    decoration: InputDecoration(
+//                      border: OutlineInputBorder(),
+//                      labelText: 'Password',
+//                    ),
+//                    validator: (value) {
+//                      if (value.isEmpty) {
+//                        return "Please enter a password";
+//                      }
+//                      return null;
+//                    },
+//                    onSaved: (value) => _password = value),
+//              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PlatformButton(
+                  child: Text("Login"),
+                  color: CupertinoColors.activeBlue,
+                  onPressed: validateAndSubmit,
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Please enter your email";
-                  }
-                  return null;
-                },
-                onSaved: (value) => _email = value.trim()
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.0),
-                child: TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Password',
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return "Please enter a password";
+                padding: const EdgeInsets.all(8.0),
+                child: PlatformButton(
+                  child: Text("Create an Account"),
+                  color: CupertinoColors.activeBlue,
+                  ios: (_) => CupertinoButtonData(
+                    onPressed: () {
+                      Navigator.pushReplacement(context,
+                          CupertinoPageRoute(builder: (context) => Register()));
                     }
-                    return null;
+                  ),
+                  android: (_) => MaterialRaisedButtonData(
+                    onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => Register()));
                   },
-                  onSaved: (value) => _password = value
+                  ),
                 ),
-              ),
-              Text(
-                  _auth.errorMessage,
-                  style: new TextStyle(color: Colors.red),
-              ),
-              RaisedButton(
-                child: Text("Login"),
-                onPressed: validateAndSubmit,
-              ),
-              RaisedButton(
-                child: Text("Login with Google"),
-                onPressed: googleSignIn,
-              ),
-              RaisedButton(
-                child: Text("Create an Account"),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Register()));
-                },
               )
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<FirebaseUser> googleSignIn() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final FirebaseUser user = await _auth.signInWithCredential(credential);
-    print("signed in " + user.displayName);
-    return user;
   }
 
   // Check if form is valid before perform login or signup
@@ -123,15 +121,23 @@ class _LoginState extends State<Login> {
   }
 
   void validateAndSubmit() async {
-    if(validateAndSave() && _formKey.currentState.validate()) {
+    if (validateAndSave() && _formKey.currentState.validate()) {
+      FirebaseUser user = await _auth.signIn(emailController.text, passwordController.text);
+      print("Logged in ${user.displayName}");
 
-      FirebaseUser user = await _auth.signIn(_email, _password);
-      print("Logged in $user");
-
-      if(user != null) {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage(userName: user.displayName)));
+      if (user != null) {
+        if (isIOS) {
+          Navigator.pushReplacement(
+              context,
+              CupertinoPageRoute(
+                  builder: (BuildContext context) =>
+                      HomePage(userName: user.displayName)));
+        } else {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(userName: user.displayName)));
+        }
       }
     }
   }
