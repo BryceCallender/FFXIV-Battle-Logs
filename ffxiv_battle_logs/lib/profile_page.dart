@@ -48,6 +48,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                       text: FirebaseAuthentication
                                           .currentUser.displayName),
                                   readOnly: true,
+                                  android: (_) => MaterialTextFieldData(
+                                    decoration: InputDecoration(
+                                      hintText: "FF Log Username",
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
                                 ),
                                 PlatformTextField(
                                   controller: displayNameController,
@@ -56,7 +62,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   android: (_) => MaterialTextFieldData(
                                     decoration: InputDecoration(
                                       hintText: "FF Log Username",
-                                      prefixIcon: Icon(Icons.search),
                                       border: OutlineInputBorder(),
                                     ),
                                   ),

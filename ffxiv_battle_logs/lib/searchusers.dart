@@ -110,33 +110,34 @@ class _SearchUserStats extends State<SearchUsers> {
         backgroundColor: CupertinoColors.activeBlue,
       ),
       body: Container(
-        child: Column(children: [
+        child: ListView(children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: PlatformTextField(
               controller: nameController,
               ios: (_) => CupertinoTextFieldData(
-                keyboardType: TextInputType.text,
-                prefix: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(CupertinoIcons.search),
-                ),
-                placeholder: "Character name"),
+                  keyboardType: TextInputType.text,
+                  prefix: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(CupertinoIcons.search),
+                  ),
+                  placeholder: "Character name"),
               android: (_) => MaterialTextFieldData(
-                keyboardType: TextInputType.text,
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: "Character name",
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
-                )
-              ),
+                  keyboardType: TextInputType.text,
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    hintText: "Character name",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  )),
             ),
           ),
           ...platformPickers(),
-          PlatformButton(
-            child: Text("Submit"),
-            ios: (_) => CupertinoButtonData(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PlatformButton(
+              child: Text("Submit"),
+              ios: (_) => CupertinoButtonData(
                 color: CupertinoColors.activeBlue,
                 onPressed: () {
                   Navigator.push(
@@ -148,19 +149,19 @@ class _SearchUserStats extends State<SearchUsers> {
                     ),
                   );
                 },
-            ),
-            android: (_) => MaterialRaisedButtonData(
-              color: Colors.blue,
-              splashColor: Colors.lightBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchResults(
-                    nameController.text, world, server,
-                    zoneNumber: zoneID.item2)),
-                );
-              }
+              ),
+              android: (_) => MaterialRaisedButtonData(
+                  color: Colors.blue,
+                  splashColor: Colors.lightBlue,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchResults(
+                              nameController.text, world, server,
+                              zoneNumber: zoneID.item2)),
+                    );
+                  }),
             ),
           ),
         ]),
@@ -178,25 +179,25 @@ class _SearchUserStats extends State<SearchUsers> {
             controller: worldController,
             placeholder: "World",
             onTap: () {
-               showCupertinoModalPopup(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      height: 200,
-                      child: CupertinoPicker(
-                        backgroundColor: Colors.blue,
-                        itemExtent: 30.0,
-                        onSelectedItemChanged: (int value) {
-                            world = worlds[value];
-                            worldController.text = world;
-                            print(world);
-                        },
-                        children: worlds.map((world) {
-                          return Text(world);
-                        }).toList(),
-                      ),
-                    );
-                  },
+              showCupertinoModalPopup(
+                context: context,
+                builder: (BuildContext context) {
+                  return SizedBox(
+                    height: 200,
+                    child: CupertinoPicker(
+                      backgroundColor: Colors.blue,
+                      itemExtent: 30.0,
+                      onSelectedItemChanged: (int value) {
+                        world = worlds[value];
+                        worldController.text = world;
+                        print(world);
+                      },
+                      children: worlds.map((world) {
+                        return Text(world);
+                      }).toList(),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -216,9 +217,9 @@ class _SearchUserStats extends State<SearchUsers> {
                       child: CupertinoPicker(
                         itemExtent: 25.0,
                         onSelectedItemChanged: (int value) {
-                            server = servers[value];
-                            serverController.text = server;
-                            print(server);
+                          server = servers[value];
+                          serverController.text = server;
+                          print(server);
                         },
                         children: servers.map((server) {
                           return Text(server);
@@ -249,11 +250,11 @@ class _SearchUserStats extends State<SearchUsers> {
                           child: CupertinoPicker(
                             itemExtent: 30.0,
                             onSelectedItemChanged: (int value) {
-                                Tuple2<String, int> data =
-                                    snapshot.data[value] as Tuple2<String, int>;
-                                zoneID = data;
-                                zoneController.text = data.item1;
-                                print(zoneID);
+                              Tuple2<String, int> data =
+                                  snapshot.data[value] as Tuple2<String, int>;
+                              zoneID = data;
+                              zoneController.text = data.item1;
+                              print(zoneID);
                             },
                             children: snapshot.data.map<Text>((tuple) {
                               return Text(tuple.item1);
@@ -321,8 +322,9 @@ class _SearchUserStats extends State<SearchUsers> {
                 child: DropdownButton(
                   value: zoneID,
                   isExpanded: true,
-                  items: snapshot.data.map<DropdownMenuItem<Tuple2<String, int>>>(
-                      (Tuple2<String, int> value) {
+                  items: snapshot.data
+                      .map<DropdownMenuItem<Tuple2<String, int>>>(
+                          (Tuple2<String, int> value) {
                     return DropdownMenuItem<Tuple2<String, int>>(
                       value: value,
                       child: Text(value.item1),

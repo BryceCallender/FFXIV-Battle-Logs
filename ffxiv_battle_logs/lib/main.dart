@@ -115,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             Text(
-                              "FINAL FANTASY XIV ©️ 2010 - 2020 SQUARE ENIX CO., LTD. All Rights Reserved.",
+                              "FINAL FANTASY XIV © 2010 - 2020 SQUARE ENIX CO., LTD. All Rights Reserved.",
                               textAlign: TextAlign.center,
                             )
                           ],

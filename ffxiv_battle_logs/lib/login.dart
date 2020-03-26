@@ -46,36 +46,27 @@ class _LoginState extends State<Login> {
             children: <Widget>[
               PlatformTextField(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                android: (_) => MaterialTextFieldData(
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                    prefix: Icon(Icons.email),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
               PlatformTextField(
                 controller: passwordController,
                 obscureText: true,
+                keyboardType: TextInputType.text,
+                android: (_) => MaterialTextFieldData(
+                  decoration: InputDecoration(
+                    hintText: "Password",
+                    prefix: Icon(Icons.lock),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
-//              TextFormField(
-//                  decoration: InputDecoration(
-//                    border: OutlineInputBorder(),
-//                    labelText: 'Email',
-//                  ),
-//                  validator: (value) {
-//
-//                  },
-//                  onSaved: (value) => _email = value.trim()),
-//              Padding(
-//                padding: EdgeInsets.only(top: 10.0),
-//                child: TextFormField(
-//                    obscureText: true,
-//                    decoration: InputDecoration(
-//                      border: OutlineInputBorder(),
-//                      labelText: 'Password',
-//                    ),
-//                    validator: (value) {
-//                      if (value.isEmpty) {
-//                        return "Please enter a password";
-//                      }
-//                      return null;
-//                    },
-//                    onSaved: (value) => _password = value),
-//              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: PlatformButton(
@@ -89,17 +80,15 @@ class _LoginState extends State<Login> {
                 child: PlatformButton(
                   child: Text("Create an Account"),
                   color: CupertinoColors.activeBlue,
-                  ios: (_) => CupertinoButtonData(
-                    onPressed: () {
-                      Navigator.pushReplacement(context,
-                          CupertinoPageRoute(builder: (context) => Register()));
-                    }
-                  ),
+                  ios: (_) => CupertinoButtonData(onPressed: () {
+                    Navigator.pushReplacement(context,
+                        CupertinoPageRoute(builder: (context) => Register()));
+                  }),
                   android: (_) => MaterialRaisedButtonData(
                     onPressed: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Register()));
-                  },
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Register()));
+                    },
                   ),
                 ),
               )
@@ -122,10 +111,11 @@ class _LoginState extends State<Login> {
 
   void validateAndSubmit() async {
     if (validateAndSave() && _formKey.currentState.validate()) {
-      FirebaseUser user = await _auth.signIn(emailController.text, passwordController.text);
-      print("Logged in ${user.displayName}");
+      FirebaseUser user =
+          await _auth.signIn(emailController.text, passwordController.text);
 
       if (user != null) {
+        print("Logged in ${user.displayName}");
         if (isIOS) {
           Navigator.pushReplacement(
               context,
