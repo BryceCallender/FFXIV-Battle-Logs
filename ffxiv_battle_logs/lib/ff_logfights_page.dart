@@ -25,6 +25,10 @@ class FFLogFightsPage extends StatelessWidget {
       appBar: PlatformAppBar(
         title: Text(report.title),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "fights",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: Container(
         child: FutureBuilder(
@@ -123,9 +127,7 @@ class FFLogFightsPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              trailing: isIOS
-                                  ? Icon(CupertinoIcons.forward)
-                                  : Icon(Icons.keyboard_arrow_right),
+                              trailing: isIOS? Icon(CupertinoIcons.forward, color: Styles.getColorFromBrightness(context)) : Icon(Icons.keyboard_arrow_right, color: Styles.getColorFromBrightness(context)),
                               onTap: () {
                                 if (isIOS) {
                                   Navigator.push(

@@ -1,4 +1,6 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:ffxiv_battle_logs/authentication.dart';
+import 'package:ffxiv_battle_logs/forgot_password.dart';
 import 'package:ffxiv_battle_logs/home_page.dart';
 import 'package:ffxiv_battle_logs/register.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,16 +39,24 @@ class _LoginState extends State<Login> {
       appBar: PlatformAppBar(
         title: Text(widget.title),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "login",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: Form(
         key: _formKey,
         child: Container(
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
               PlatformTextField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
+                ios: (_) => CupertinoTextFieldData(
+                  padding: const EdgeInsets.all(12.0),
+                  placeholder: "Email",
+                ),
                 android: (_) => MaterialTextFieldData(
                   decoration: InputDecoration(
                     hintText: "Email",
@@ -59,12 +69,29 @@ class _LoginState extends State<Login> {
                 controller: passwordController,
                 obscureText: true,
                 keyboardType: TextInputType.text,
+                ios: (_) => CupertinoTextFieldData(
+                    padding: const EdgeInsets.all(12.0),
+                    placeholder: "Password"),
                 android: (_) => MaterialTextFieldData(
                   decoration: InputDecoration(
                     hintText: "Password",
                     prefix: Icon(Icons.lock),
                     border: OutlineInputBorder(),
                   ),
+                ),
+              ),
+              PlatformButton(
+                child: Text("Forgot Password?"),
+                ios: (_) => CupertinoButtonData(onPressed: () {
+                  Navigator.push(context,
+                      CupertinoPageRoute(builder: (context) => ForgotPassword()));
+                }),
+                android: (_) => MaterialRaisedButtonData(
+                  color: CupertinoColors.activeBlue,
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ForgotPassword()));
+                  },
                 ),
               ),
               Padding(
@@ -75,23 +102,20 @@ class _LoginState extends State<Login> {
                   onPressed: validateAndSubmit,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: PlatformButton(
-                  child: Text("Create an Account"),
+              PlatformButton(
+                child: Text("Create an Account"),
+                ios: (_) => CupertinoButtonData(onPressed: () {
+                  Navigator.push(context,
+                      CupertinoPageRoute(builder: (context) => Register()));
+                }),
+                android: (_) => MaterialRaisedButtonData(
                   color: CupertinoColors.activeBlue,
-                  ios: (_) => CupertinoButtonData(onPressed: () {
-                    Navigator.pushReplacement(context,
-                        CupertinoPageRoute(builder: (context) => Register()));
-                  }),
-                  android: (_) => MaterialRaisedButtonData(
-                    onPressed: () {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Register()));
-                    },
-                  ),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Register()));
+                  },
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -100,17 +124,22 @@ class _LoginState extends State<Login> {
   }
 
   // Check if form is valid before perform login or signup
-  bool validateAndSave() {
+  bool validateTextFields() {
     final form = _formKey.currentState;
     if (form.validate()) {
-      form.save();
-      return true;
+      if (EmailValidator.validate(emailController.text) &&
+          passwordController.text.length > 0) {
+        form.save();
+        return true;
+      } else {
+        return false;
+      }
     }
     return false;
   }
 
   void validateAndSubmit() async {
-    if (validateAndSave() && _formKey.currentState.validate()) {
+    if (validateTextFields()) {
       FirebaseUser user =
           await _auth.signIn(emailController.text, passwordController.text);
 

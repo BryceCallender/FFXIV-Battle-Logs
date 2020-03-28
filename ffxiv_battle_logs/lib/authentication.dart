@@ -59,8 +59,8 @@ class FirebaseAuthentication implements BaseAuth {
       print(user.displayName);
 
       return user;
-    }catch(exception) {
-      return null;
+    }catch(error) {
+      return Future.error(error);
     }
   }
 
@@ -85,6 +85,10 @@ class FirebaseAuthentication implements BaseAuth {
 
   @override
   Future<void> sendPasswordResetEmail(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch(e) {
+      return Future.error(e);
+    }
   }
 }

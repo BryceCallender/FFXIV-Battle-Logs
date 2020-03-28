@@ -1,8 +1,14 @@
 import 'package:ffxiv_battle_logs/authentication.dart';
+import 'package:ffxiv_battle_logs/styles.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter/foundation.dart' as foundation;
+
+import 'forgot_password.dart';
+
+bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);
@@ -21,6 +27,10 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: PlatformAppBar(
         title: Text("Profile"),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "profile",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -32,7 +42,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: PlatformButton(
-                    child: Text("Update FF Log Username"),
+                    child: Text("Update FF Log Username",
+                        style: Styles.getTextStyleFromBrightness(context)),
                     color: CupertinoColors.activeBlue,
                     onPressed: () {
                       showPlatformDialog(
@@ -95,15 +106,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: PlatformButton(
-                    child: Text("Change Password"),
+                    child: Text("Change Password",
+                        style: Styles.getTextStyleFromBrightness(context)),
                     color: CupertinoColors.activeBlue,
-                    onPressed: () {},
+                    onPressed: () {
+                      if(isIOS) {
+                        Navigator.push(context,
+                            CupertinoPageRoute(builder: (context) => ForgotPassword()));
+                      } else {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => ForgotPassword()));
+                      }
+                    },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: PlatformButton(
-                    child: Text("Log out"),
+                    child: Text("Log out",
+                        style: Styles.getTextStyleFromBrightness(context)),
                     color: CupertinoColors.activeBlue,
                     onPressed: () {
                       _auth.signOut();

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'authentication.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
@@ -45,24 +46,31 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     print(WidgetsBinding.instance.window
         .platformBrightness); // should print Brightness.light / Brightness.dark when you switch
     super.didChangePlatformBrightness(); // make sure you call this
-    setState(() {}); //Once tabbed back into the app this will rebuild with new brightness :)
+    setState(
+        () {}); //Once tabbed back into the app this will rebuild with new brightness :)
   }
 
   @override
   Widget build(BuildContext context) {
-    return PlatformApp(
-      home: MyHomePage(title: "FFXIV Battle Logs"),
-      debugShowCheckedModeBanner: false,
-      ios: (_) => CupertinoAppData(
-        theme: CupertinoThemeData(
-            primaryColor: CupertinoColors.activeBlue,
-            textTheme: CupertinoTextThemeData(
-              primaryColor: WidgetsBinding.instance.window.platformBrightness == Brightness.dark? Colors.white : Colors.black),
-            brightness: WidgetsBinding.instance.window.platformBrightness),
-      ),
-      android: (_) => MaterialAppData(
-        theme: ThemeData.light(),
-        darkTheme: ThemeData.dark(),
+    return OverlaySupport(
+      child: PlatformApp(
+        home: MyHomePage(title: "FFXIV Battle Logs"),
+        debugShowCheckedModeBanner: false,
+        ios: (_) => CupertinoAppData(
+          theme: CupertinoThemeData(
+              primaryColor: CupertinoColors.activeBlue,
+              textTheme: CupertinoTextThemeData(
+                  primaryColor:
+                      WidgetsBinding.instance.window.platformBrightness ==
+                              Brightness.dark
+                          ? Colors.white
+                          : Colors.black),
+              brightness: WidgetsBinding.instance.window.platformBrightness),
+        ),
+        android: (_) => MaterialAppData(
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+        ),
       ),
     );
   }
@@ -85,7 +93,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return PlatformScaffold(
       appBar: PlatformAppBar(
           title: Text(widget.title),
-          backgroundColor: CupertinoColors.activeBlue
+          backgroundColor: CupertinoColors.activeBlue,
+          ios: (_) => CupertinoNavigationBarData(
+            heroTag: "main",
+            transitionBetweenRoutes: false,
+          ),
       ),
       body: SafeArea(
         child: Container(

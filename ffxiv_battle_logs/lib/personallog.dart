@@ -34,9 +34,15 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
     return PlatformScaffold(
+      iosContentPadding: true,
+      iosContentBottomPadding: true,
       appBar: PlatformAppBar(
         title: Text(widget.userName + " Personal Logs"),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "personalLog",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: FutureBuilder(
         future: getReports(),
@@ -69,6 +75,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                   return Container(
                     padding: EdgeInsets.only(top: 10.0),
                     child: Card(
+                      elevation: 5.0,
                       color: mediaQuery.platformBrightness == Brightness.dark? ThemeData.dark().cardColor: ThemeData.light().cardColor,
                       child: Column(
                         children: <Widget>[
@@ -95,7 +102,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                                     DateTime.fromMillisecondsSinceEpoch(
                                         snapshot.data[index].start)),
                                 style: Styles.getTextStyleFromBrightness(context)),
-                            trailing: isIOS? Icon(CupertinoIcons.forward) : Icon(Icons.keyboard_arrow_right),
+                            trailing: isIOS? Icon(CupertinoIcons.forward, color: Styles.getColorFromBrightness(context)) : Icon(Icons.keyboard_arrow_right, color: Styles.getColorFromBrightness(context)),
                             onTap: () {
                               if(isIOS) {
                                 Navigator.push(

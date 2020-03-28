@@ -44,6 +44,10 @@ class _EventPageState extends State<EventPage> {
       appBar: PlatformAppBar(
         title: _currentIndex == 0? Text("${widget.playerName}'s events"): Text("${widget.playerName}'s real time events"),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "event",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: _currentIndex == 0?
       FinalEventSystem(playerName: widget.playerName,

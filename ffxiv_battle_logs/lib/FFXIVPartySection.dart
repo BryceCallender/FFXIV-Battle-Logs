@@ -40,6 +40,7 @@ class FFXIVPartySection extends StatelessWidget {
         ),
       ),
       Container(
+        padding: EdgeInsets.only(bottom: 8.0),
         constraints: BoxConstraints.expand(height: 100.0),
         decoration: BoxDecoration(color: Colors.transparent),
         child: Image.asset(
@@ -47,72 +48,44 @@ class FFXIVPartySection extends StatelessWidget {
           fit: BoxFit.contain,
         ),
       ),
-      Card(
-        color: mediaQuery.platformBrightness == Brightness.dark
-        ? ThemeData.dark().cardColor
-            : ThemeData.light().cardColor,
-        child: ListTile(
-          title: Text(ffxivParty.characters[0].name,
-              style: Styles.getTextStyleFromBrightness(
-                  context)),
-          leading: Image.asset(ffxivParty.characters[0].playerClass.iconPath,
-              width: icon_size, height: icon_size),
-          trailing: isIOS
-              ? Icon(CupertinoIcons.forward)
-              : Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            if(isIOS) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[0].name, reportID,
-                        ffxivParty.characters[0].playerClass.name,
-                        start, end, ffxivParty.characters[0].sourceID);
-                  },
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[0].name, reportID,
-                        ffxivParty.characters[0].playerClass.name,
-                        start, end, ffxivParty.characters[0].sourceID);
-                  },
-                ),
-              );
-            }
-          },
+      Container(
+        //padding: const EdgeInsets.only(top: 8.0),
+        decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blueAccent.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
         ),
-      ),
-    ];
-
-    if (partyCount == 8) {
-      builder.add(
-        Card(
+        child: Card(
           color: mediaQuery.platformBrightness == Brightness.dark
               ? ThemeData.dark().cardColor
               : ThemeData.light().cardColor,
           child: ListTile(
-            title: Text(ffxivParty.characters[1].name,
-                style: Styles.getTextStyleFromBrightness(
-                context)),
-            leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
+            title: Text(ffxivParty.characters[0].name,
+                style: Styles.getTextStyleFromBrightness(context)),
+            leading: Image.asset(ffxivParty.characters[0].playerClass.iconPath,
                 width: icon_size, height: icon_size),
             trailing: isIOS
-                ? Icon(CupertinoIcons.forward)
-                : Icon(Icons.keyboard_arrow_right),
+                ? Icon(CupertinoIcons.forward,
+                color: Styles.getColorFromBrightness(context))
+                : Icon(Icons.keyboard_arrow_right,
+                color: Styles.getColorFromBrightness(context)),
             onTap: () {
-              if(isIOS) {
+              if (isIOS) {
                 Navigator.push(
                   context,
                   CupertinoPageRoute(
                     builder: (context) {
-                      return EventPage(ffxivParty.characters[1].name, reportID,
-                          ffxivParty.characters[1].playerClass.name,
-                          start, end, ffxivParty.characters[1].sourceID);
+                      return EventPage(
+                          ffxivParty.characters[0].name,
+                          reportID,
+                          ffxivParty.characters[0].playerClass.name,
+                          start,
+                          end,
+                          ffxivParty.characters[0].sourceID);
                     },
                   ),
                 );
@@ -121,14 +94,83 @@ class FFXIVPartySection extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return EventPage(ffxivParty.characters[1].name, reportID,
-                          ffxivParty.characters[1].playerClass.name,
-                          start, end, ffxivParty.characters[1].sourceID);
+                      return EventPage(
+                          ffxivParty.characters[0].name,
+                          reportID,
+                          ffxivParty.characters[0].playerClass.name,
+                          start,
+                          end,
+                          ffxivParty.characters[0].sourceID);
                     },
                   ),
                 );
               }
             },
+          ),
+        ),
+      ),
+    ];
+
+    if (partyCount == 8) {
+      builder.add(
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blueAccent.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[1].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                      color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                      color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[1].name,
+                            reportID,
+                            ffxivParty.characters[1].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[1].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[1].name,
+                            reportID,
+                            ffxivParty.characters[1].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[1].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         ),
       );
@@ -142,6 +184,7 @@ class FFXIVPartySection extends StatelessWidget {
 
     builder.add(
       Container(
+        padding: EdgeInsets.only(bottom: 8.0),
         constraints: BoxConstraints.expand(height: 100.0),
         decoration: BoxDecoration(color: Colors.transparent),
         child: Image.asset(
@@ -152,127 +195,191 @@ class FFXIVPartySection extends StatelessWidget {
     );
 
     if (partyCount == 4) {
-      builder.add(Card(
-        color: mediaQuery.platformBrightness == Brightness.dark
-            ? ThemeData.dark().cardColor
-            : ThemeData.light().cardColor,
-        child: ListTile(
-          title: Text(ffxivParty.characters[1].name,
-              style: Styles.getTextStyleFromBrightness(
-                  context)),
-          leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
-              width: icon_size, height: icon_size),
-          trailing: isIOS
-              ? Icon(CupertinoIcons.forward)
-              : Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            if(isIOS) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[1].name, reportID,
-                        ffxivParty.characters[1].playerClass.name,
-                        start, end, ffxivParty.characters[1].sourceID);
-                  },
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[1].name, reportID,
-                        ffxivParty.characters[1].playerClass.name,
-                        start, end, ffxivParty.characters[1].sourceID);
-                  },
-                ),
-              );
-            }
-          },
+      builder.add(
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.green.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[1].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[1].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                  color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                  color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[1].name,
+                            reportID,
+                            ffxivParty.characters[1].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[1].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[1].name,
+                            reportID,
+                            ffxivParty.characters[1].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[1].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ),
-      ),);
+      );
     } else if (partyCount == 8) {
-      builder.add(Card(
-        color: mediaQuery.platformBrightness == Brightness.dark
-            ? ThemeData.dark().cardColor
-            : ThemeData.light().cardColor,
-        child: ListTile(
-          title: Text(ffxivParty.characters[2].name,
-              style: Styles.getTextStyleFromBrightness(
-                  context)),
-          leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
-              width: icon_size, height: icon_size),
-          trailing: isIOS
-              ? Icon(CupertinoIcons.forward)
-              : Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            if(isIOS) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[2].name, reportID,
-                        ffxivParty.characters[2].playerClass.name,
-                        start, end, ffxivParty.characters[2].sourceID);
-                  },
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[2].name, reportID,
-                        ffxivParty.characters[2].playerClass.name,
-                        start, end, ffxivParty.characters[2].sourceID);
-                  },
-                ),
-              );
-            }
-          },
+      builder.add(
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.green.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[2].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                  color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                  color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[2].name,
+                            reportID,
+                            ffxivParty.characters[2].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[2].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[2].name,
+                            reportID,
+                            ffxivParty.characters[2].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[2].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ),
-      ),);
+      );
 
       builder.add(
-        Card(
-          color: mediaQuery.platformBrightness == Brightness.dark
-              ? ThemeData.dark().cardColor
-              : ThemeData.light().cardColor,
-          child: ListTile(
-            title: Text(ffxivParty.characters[3].name,
-                style: Styles.getTextStyleFromBrightness(
-                    context)),
-            leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
-                width: icon_size, height: icon_size),
-            trailing: isIOS
-                ? Icon(CupertinoIcons.forward)
-                : Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              if(isIOS) {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return EventPage(ffxivParty.characters[3].name, reportID,
-                          ffxivParty.characters[3].playerClass.name,
-                          start, end, ffxivParty.characters[3].sourceID);
-                    },
-                  ),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return EventPage(ffxivParty.characters[3].name, reportID,
-                          ffxivParty.characters[3].playerClass.name,
-                          start, end, ffxivParty.characters[3].sourceID);
-                    },
-                  ),
-                );
-              }
-            },
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.green.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[3].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                      color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                      color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[3].name,
+                            reportID,
+                            ffxivParty.characters[3].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[3].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[3].name,
+                            reportID,
+                            ffxivParty.characters[3].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[3].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         ),
       );
@@ -285,6 +392,7 @@ class FFXIVPartySection extends StatelessWidget {
     );
 
     builder.add(Container(
+      padding: EdgeInsets.only(bottom: 8.0),
       constraints: BoxConstraints.expand(height: 100.0),
       decoration: BoxDecoration(color: Colors.transparent),
       child: Image.asset(
@@ -294,251 +402,378 @@ class FFXIVPartySection extends StatelessWidget {
     ));
 
     if (partyCount == 4) {
-      builder.add(Card(
-        color: mediaQuery.platformBrightness == Brightness.dark
-            ? ThemeData.dark().cardColor
-            : ThemeData.light().cardColor,
-        child: ListTile(
-          title: Text(ffxivParty.characters[2].name,
-              style: Styles.getTextStyleFromBrightness(
-                  context)),
-          leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
-              width: icon_size, height: icon_size),
-          trailing: isIOS
-              ? Icon(CupertinoIcons.forward)
-              : Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            if(isIOS) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[2].name, reportID,
-                        ffxivParty.characters[2].playerClass.name,
-                        start, end, ffxivParty.characters[2].sourceID);
-                  },
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[2].name, reportID,
-                        ffxivParty.characters[2].playerClass.name,
-                        start, end, ffxivParty.characters[2].sourceID);
-                  },
-                ),
-              );
-            }
-          },
+      builder.add(
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[2].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                  color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                  color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[2].name,
+                            reportID,
+                            ffxivParty.characters[2].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[2].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[2].name,
+                            reportID,
+                            ffxivParty.characters[2].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[2].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ),
-      ),);
+      );
 
       builder.add(
-        Card(
-          color: mediaQuery.platformBrightness == Brightness.dark
-              ? ThemeData.dark().cardColor
-              : ThemeData.light().cardColor,
-          child: ListTile(
-            title: Text(ffxivParty.characters[3].name,
-                style: Styles.getTextStyleFromBrightness(
-                    context)),
-            leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
-                width: icon_size, height: icon_size),
-            trailing: isIOS
-                ? Icon(CupertinoIcons.forward)
-                : Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              if(isIOS) {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return EventPage(ffxivParty.characters[3].name, reportID,
-                          ffxivParty.characters[3].playerClass.name,
-                          start, end, ffxivParty.characters[3].sourceID);
-                    },
-                  ),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return EventPage(ffxivParty.characters[3].name, reportID,
-                          ffxivParty.characters[3].playerClass.name,
-                          start, end, ffxivParty.characters[3].sourceID);
-                    },
-                  ),
-                );
-              }
-            },
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[3].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                      color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                      color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[3].name,
+                            reportID,
+                            ffxivParty.characters[3].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[3].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[3].name,
+                            reportID,
+                            ffxivParty.characters[3].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[3].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         ),
       );
     } else if (partyCount == 8) {
-      builder.add(Card(
-        color: mediaQuery.platformBrightness == Brightness.dark
-            ? ThemeData.dark().cardColor
-            : ThemeData.light().cardColor,
-        child: ListTile(
-          title: Text(ffxivParty.characters[4].name,
-              style: Styles.getTextStyleFromBrightness(
-                  context)),
-          leading: Image.asset(ffxivParty.characters[4].playerClass.iconPath,
-              width: icon_size, height: icon_size),
-          trailing: isIOS
-              ? Icon(CupertinoIcons.forward)
-              : Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            if(isIOS) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[4].name, reportID,
-                        ffxivParty.characters[4].playerClass.name,
-                        start, end, ffxivParty.characters[4].sourceID);
-                  },
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[4].name, reportID,
-                        ffxivParty.characters[4].playerClass.name,
-                        start, end, ffxivParty.characters[4].sourceID);
-                  },
-                ),
-              );
-            }
-          },
+      builder.add(
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[4].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[4].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                  color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                  color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[4].name,
+                            reportID,
+                            ffxivParty.characters[4].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[4].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[4].name,
+                            reportID,
+                            ffxivParty.characters[4].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[4].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ),
-      ),
       );
-      builder.add(Card(
-        color: mediaQuery.platformBrightness == Brightness.dark
-            ? ThemeData.dark().cardColor
-            : ThemeData.light().cardColor,
-        child: ListTile(
-          title: Text(ffxivParty.characters[5].name,
-              style: Styles.getTextStyleFromBrightness(
-                  context)),
-          leading: Image.asset(ffxivParty.characters[5].playerClass.iconPath,
-              width: icon_size, height: icon_size),
-          trailing: isIOS
-              ? Icon(CupertinoIcons.forward)
-              : Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            if(isIOS) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[5].name, reportID,
-                        ffxivParty.characters[5].playerClass.name,
-                        start, end, ffxivParty.characters[5].sourceID);
-                  },
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[5].name, reportID,
-                        ffxivParty.characters[5].playerClass.name,
-                        start, end, ffxivParty.characters[5].sourceID);
-                  },
-                ),
-              );
-            }
-          },
+      builder.add(
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[5].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[5].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                  color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                  color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[5].name,
+                            reportID,
+                            ffxivParty.characters[5].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[5].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[5].name,
+                            reportID,
+                            ffxivParty.characters[5].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[5].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ),
-      ),);
-      builder.add(Card(
-        color: mediaQuery.platformBrightness == Brightness.dark
-            ? ThemeData.dark().cardColor
-            : ThemeData.light().cardColor,
-        child: ListTile(
-          title: Text(ffxivParty.characters[6].name,
-              style: Styles.getTextStyleFromBrightness(
-                  context)),
-          leading: Image.asset(ffxivParty.characters[6].playerClass.iconPath,
-              width: icon_size, height: icon_size),
-          trailing: isIOS
-              ? Icon(CupertinoIcons.forward)
-              : Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            if(isIOS) {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[6].name, reportID,
-                        ffxivParty.characters[6].playerClass.name,
-                        start, end, ffxivParty.characters[6].sourceID);
-                  },
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return EventPage(ffxivParty.characters[6].name, reportID,
-                        ffxivParty.characters[6].playerClass.name,
-                        start, end, ffxivParty.characters[6].sourceID);
-                  },
-                ),
-              );
-            }
-          },
+      );
+      builder.add(
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[6].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[6].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                  color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                  color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[6].name,
+                            reportID,
+                            ffxivParty.characters[6].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[6].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[6].name,
+                            reportID,
+                            ffxivParty.characters[6].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[6].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ),
-      ),);
+      );
 
       builder.add(
-        Card(
-          color: mediaQuery.platformBrightness == Brightness.dark
-              ? ThemeData.dark().cardColor
-              : ThemeData.light().cardColor,
-          child: ListTile(
-            title: Text(ffxivParty.characters[7].name,
-                style: Styles.getTextStyleFromBrightness(
-                    context)),
-            leading: Image.asset(ffxivParty.characters[7].playerClass.iconPath,
-                width: icon_size, height: icon_size),
-            trailing: isIOS
-                ? Icon(CupertinoIcons.forward)
-                : Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              if(isIOS) {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return EventPage(ffxivParty.characters[7].name, reportID,
-                          ffxivParty.characters[7].playerClass.name,
-                          start, end, ffxivParty.characters[7].sourceID);
-                    },
-                  ),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return EventPage(ffxivParty.characters[7].name, reportID,
-                          ffxivParty.characters[7].playerClass.name,
-                          start, end, ffxivParty.characters[7].sourceID);
-                    },
-                  ),
-                );
-              }
-            },
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withAlpha(200),
+                blurRadius: 10.0,
+                spreadRadius: 0.0,
+              ),
+            ],
+          ),
+          child: Card(
+            color: mediaQuery.platformBrightness == Brightness.dark
+                ? ThemeData.dark().cardColor
+                : ThemeData.light().cardColor,
+            child: ListTile(
+              title: Text(ffxivParty.characters[7].name,
+                  style: Styles.getTextStyleFromBrightness(context)),
+              leading: Image.asset(ffxivParty.characters[7].playerClass.iconPath,
+                  width: icon_size, height: icon_size),
+              trailing: isIOS
+                  ? Icon(CupertinoIcons.forward,
+                      color: Styles.getColorFromBrightness(context))
+                  : Icon(Icons.keyboard_arrow_right,
+                      color: Styles.getColorFromBrightness(context)),
+              onTap: () {
+                if (isIOS) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[7].name,
+                            reportID,
+                            ffxivParty.characters[7].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[7].sourceID);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EventPage(
+                            ffxivParty.characters[7].name,
+                            reportID,
+                            ffxivParty.characters[7].playerClass.name,
+                            start,
+                            end,
+                            ffxivParty.characters[7].sourceID);
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         ),
       );

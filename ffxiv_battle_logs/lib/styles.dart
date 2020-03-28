@@ -43,4 +43,10 @@ class Styles {
 
     return TextStyle(color: brightness == Brightness.dark? Colors.white: Colors.black);
   }
+
+  static Color getColorFromBrightness(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+
+    return brightness == Brightness.dark? Colors.white : Colors.black;
+  }
 }

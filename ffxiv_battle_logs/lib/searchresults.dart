@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ffxiv_battle_logs/styles.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +26,9 @@ class SearchResults extends StatelessWidget {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         ios: (_) => CupertinoNavigationBarData(
-          title: Text("Results for: $characterName")
+          title: Text("Results for: $characterName"),
+            heroTag: "searchresults",
+            transitionBetweenRoutes: false,
         ),
       ),
 //      appBar: AppBar(
@@ -65,9 +69,12 @@ class SearchResults extends StatelessWidget {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
+                  var mediaQuery = MediaQuery.of(context);
                   return Container(
                     padding: EdgeInsets.only(top: 10.0),
                     child: Card(
+                      elevation: 5.0,
+                      color: mediaQuery.platformBrightness == Brightness.dark? ThemeData.dark().cardColor: ThemeData.light().cardColor,
                       child: Column(
                         children: <Widget>[
                           ListTile(
@@ -84,12 +91,14 @@ class SearchResults extends StatelessWidget {
                                       : "assets/images/map_icons/060000/060855.png",
                                   fit: BoxFit.cover),
                             ),
-                            title: Text(snapshot.data[index].encounterName),
+                            title: Text(snapshot.data[index].encounterName,
+                            style: Styles.getTextStyleFromBrightness(context)),
                             subtitle: Text("Date Logged: " +
                                 DateFormat.yMMMMd().add_jm().format(
                                     DateTime.fromMillisecondsSinceEpoch(
-                                        snapshot.data[index].startTime))),
-                            trailing: Icon(Icons.keyboard_arrow_right),
+                                        snapshot.data[index].startTime)),
+                                style: Styles.getTextStyleFromBrightness(context)),
+                            trailing: isIOS? Icon(CupertinoIcons.forward, color: Styles.getColorFromBrightness(context)) : Icon(Icons.keyboard_arrow_right, color: Styles.getColorFromBrightness(context)),
                             onTap: () {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {

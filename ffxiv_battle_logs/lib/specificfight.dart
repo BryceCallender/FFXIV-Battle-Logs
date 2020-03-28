@@ -2,6 +2,7 @@ import 'package:ffxiv_battle_logs/FFXIVPartySection.dart';
 import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/ffxiv_classes.dart';
 import 'package:ffxiv_battle_logs/report_data_chart.dart';
+import 'package:ffxiv_battle_logs/styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -43,6 +44,10 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
       appBar: PlatformAppBar(
         title: Text("Fight #" + widget.ffLogFightData.id.toString()),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "specificfight",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: ListView(
         children: [
@@ -65,14 +70,17 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
                 return Stack(
                   children: <Widget>[
                     Container(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Center(
-                            child: Text(chartName,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)))),
+                      padding: EdgeInsets.only(top: 15),
+                      child: Center(
+                        child: Text(
+                          chartName,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
                     Container(
-                      padding: EdgeInsets.only(left: 10, right: 10, top: 20),
+                      padding: EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 8.0),
                       child: SizedBox(
                         height: 400,
                         child: ReportDataChart(snapshot.data, vertical: false),
@@ -90,7 +98,8 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               PlatformButton(
-                child: Text("DPS"),
+                child: Text("DPS",
+                    style: Styles.getTextStyleFromBrightness(context)),
                 color: CupertinoColors.destructiveRed,
                 onPressed: () {
                   setState(() {
@@ -100,13 +109,14 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
               ),
               SizedBox(width: 15.0),
               PlatformButton(
-                  child: Text("HPS"),
-                  color: Colors.green,
-                  onPressed: () {
-                    setState(() {
-                      chartName = "HPS And Overheal";
-                    });
-                  },
+                child: Text("HPS",
+                    style: Styles.getTextStyleFromBrightness(context)),
+                color: Colors.green,
+                onPressed: () {
+                  setState(() {
+                    chartName = "HPS";
+                  });
+                },
               )
             ],
           ),
@@ -132,7 +142,8 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
     widget.ffxivParty = new FFXIVParty(partyMembersInvolved);
 
-    return FFXIVPartySection(widget.ffxivParty, widget.reportID, widget.ffLogFightData.start, widget.ffLogFightData.end);
+    return FFXIVPartySection(widget.ffxivParty, widget.reportID,
+        widget.ffLogFightData.start, widget.ffLogFightData.end);
   }
 
   Future<List<charts.Series>> getGraphData() async {
@@ -153,7 +164,8 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
       List<charts.Series<DPSInfo, String>> chartData = [];
 
       entryList.forEach((player) {
-        if (player["name"] != "Limit Break" && player["name"] != "Ground Effect") {
+        if (player["name"] != "Limit Break" &&
+            player["name"] != "Ground Effect") {
           var dps = (player["total"] as int) /
               (widget.ffLogFightData.end - widget.ffLogFightData.start) *
               1000;
@@ -192,7 +204,10 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
         outsideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
-          return new charts.TextStyleSpec(color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black);
+          return new charts.TextStyleSpec(
+              color: brightness == Brightness.dark
+                  ? charts.MaterialPalette.white
+                  : charts.MaterialPalette.black);
         },
       ));
 
@@ -206,10 +221,14 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           labelAccessorFn: (DPSInfo dps, _) =>
               "RDPS: ${dps.rDPS.toStringAsFixed(1)}",
           insideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
-            return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
+            return new charts.TextStyleSpec(
+                color: charts.MaterialPalette.black);
           },
           outsideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
-            return new charts.TextStyleSpec(color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black);
+            return new charts.TextStyleSpec(
+                color: brightness == Brightness.dark
+                    ? charts.MaterialPalette.white
+                    : charts.MaterialPalette.black);
           },
         ),
       );
@@ -233,7 +252,9 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
       entryList.forEach((player) {
         print(player);
-        if (player["name"] != "Limit Break" && player["name"] != "Ground Effect" && player["name"] != "Environment") {
+        if (player["name"] != "Limit Break" &&
+            player["name"] != "Ground Effect" &&
+            player["name"] != "Environment") {
           var hps = (player["total"] as int) /
               (widget.ffLogFightData.end - widget.ffLogFightData.start) *
               1000;
@@ -280,7 +301,10 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
         outsideLabelStyleAccessorFn: (HPSInfo hps, _) {
-          return new charts.TextStyleSpec(color: brightness == Brightness.dark? charts.MaterialPalette.white : charts.MaterialPalette.black);
+          return new charts.TextStyleSpec(
+              color: brightness == Brightness.dark
+                  ? charts.MaterialPalette.white
+                  : charts.MaterialPalette.black);
         },
       ));
 
@@ -309,9 +333,9 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
     print("I already have information. Here you go");
 
-    if(chartName.contains("DPS")) {
+    if (chartName.contains("DPS")) {
       return dpsData;
-    }else {
+    } else {
       return hpsData;
     }
   }

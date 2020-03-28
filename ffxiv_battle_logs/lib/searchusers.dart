@@ -26,6 +26,10 @@ class _SearchUserStats extends State<SearchUsers> {
   final serverController = TextEditingController(text: "NA");
   final zoneController = TextEditingController(text: "Eden's Verse");
 
+  var worldScrollController = FixedExtentScrollController();
+  var serverScrollController = FixedExtentScrollController();
+  var zoneScrollController = FixedExtentScrollController(initialItem: 33);
+
   Tuple2<String, int> zoneID = Tuple2<String, int>("Eden's Verse", 33);
 
   final List<String> worlds = [
@@ -134,7 +138,7 @@ class _SearchUserStats extends State<SearchUsers> {
           ),
           ...platformPickers(),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: PlatformButton(
               child: Text("Submit"),
               ios: (_) => CupertinoButtonData(
@@ -185,11 +189,13 @@ class _SearchUserStats extends State<SearchUsers> {
                   return SizedBox(
                     height: 200,
                     child: CupertinoPicker(
-                      backgroundColor: Colors.blue,
                       itemExtent: 30.0,
+                      backgroundColor: CupertinoColors.activeBlue,
+                      scrollController: worldScrollController,
                       onSelectedItemChanged: (int value) {
                         world = worlds[value];
                         worldController.text = world;
+                        worldScrollController = FixedExtentScrollController(initialItem: value);
                         print(world);
                       },
                       children: worlds.map((world) {
@@ -216,9 +222,12 @@ class _SearchUserStats extends State<SearchUsers> {
                       height: 200,
                       child: CupertinoPicker(
                         itemExtent: 25.0,
+                        scrollController: serverScrollController,
+                        backgroundColor: CupertinoColors.activeBlue,
                         onSelectedItemChanged: (int value) {
                           server = servers[value];
                           serverController.text = server;
+                          serverScrollController = FixedExtentScrollController(initialItem: value);
                           print(server);
                         },
                         children: servers.map((server) {
@@ -240,7 +249,7 @@ class _SearchUserStats extends State<SearchUsers> {
                 child: CupertinoTextField(
                   readOnly: true,
                   controller: zoneController,
-                  placeholder: "World",
+                  placeholder: "Zone",
                   onTap: () {
                     showCupertinoModalPopup(
                       context: context,
@@ -249,11 +258,14 @@ class _SearchUserStats extends State<SearchUsers> {
                           height: 200,
                           child: CupertinoPicker(
                             itemExtent: 30.0,
+                            scrollController: zoneScrollController,
+                            backgroundColor: CupertinoColors.activeBlue,
                             onSelectedItemChanged: (int value) {
                               Tuple2<String, int> data =
                                   snapshot.data[value] as Tuple2<String, int>;
                               zoneID = data;
                               zoneController.text = data.item1;
+                              zoneScrollController = FixedExtentScrollController(initialItem: value);
                               print(zoneID);
                             },
                             children: snapshot.data.map<Text>((tuple) {
