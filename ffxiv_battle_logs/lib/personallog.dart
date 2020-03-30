@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/ff_logfights_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,15 +19,18 @@ class PersonalLogPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _MyPersonalLogPage();
 
-  final FFLogZones zoneData;
-  final String userName;
+  FFLogZones zoneData;
+  String userName;
 
-  PersonalLogPage(this.userName, this.zoneData);
+  PersonalLogPage() {
+    zoneData = new FFLogZones();
+  }
 }
 
 class _MyPersonalLogPage extends State<PersonalLogPage> {
   @override
   void initState() {
+    widget.userName = FirebaseAuthentication.currentUser.displayName;
     super.initState();
   }
 
@@ -34,8 +38,6 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
     return PlatformScaffold(
-      iosContentPadding: true,
-      iosContentBottomPadding: true,
       appBar: PlatformAppBar(
         title: Text(widget.userName + " Personal Logs"),
         backgroundColor: CupertinoColors.activeBlue,

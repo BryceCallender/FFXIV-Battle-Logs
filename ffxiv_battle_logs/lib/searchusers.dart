@@ -22,9 +22,9 @@ class _SearchUserStats extends State<SearchUsers> {
   String server = "NA";
 
   final nameController = TextEditingController();
-  final worldController = TextEditingController(text: "Adamantoise");
+  final worldController = TextEditingController(text: "World");
   final serverController = TextEditingController(text: "NA");
-  final zoneController = TextEditingController(text: "Eden's Verse");
+  final zoneController = TextEditingController(text: "Zone");
 
   var worldScrollController = FixedExtentScrollController();
   var serverScrollController = FixedExtentScrollController();

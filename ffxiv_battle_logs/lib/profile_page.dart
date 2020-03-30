@@ -1,5 +1,6 @@
 import 'package:ffxiv_battle_logs/authentication.dart';
 import 'package:ffxiv_battle_logs/styles.dart';
+import 'package:ffxiv_battle_logs/update_fflog_username.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   FirebaseAuthentication _auth = FirebaseAuthentication();
+
   final displayNameController = TextEditingController();
+  String username = FirebaseAuthentication.currentUser.displayName;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Container(
             child: Column(
               children: [
-                Text(FirebaseAuthentication.currentUser.displayName),
+                Text(username),
                 Text(FirebaseAuthentication.currentUser.email),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -46,60 +49,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: Styles.getTextStyleFromBrightness(context)),
                     color: CupertinoColors.activeBlue,
                     onPressed: () {
-                      showPlatformDialog(
-                        context: context,
-                        builder: (_) => PlatformAlertDialog(
-                          title: Text("Update your FF Log Username"),
-                          content: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: <Widget>[
-                                PlatformTextField(
-                                  controller: TextEditingController(
-                                      text: FirebaseAuthentication
-                                          .currentUser.displayName),
-                                  readOnly: true,
-                                  android: (_) => MaterialTextFieldData(
-                                    decoration: InputDecoration(
-                                      hintText: "FF Log Username",
-                                      border: OutlineInputBorder(),
-                                    ),
-                                  ),
-                                ),
-                                PlatformTextField(
-                                  controller: displayNameController,
-                                  ios: (_) => CupertinoTextFieldData(
-                                      placeholder: "Updated FF Log Username"),
-                                  android: (_) => MaterialTextFieldData(
-                                    decoration: InputDecoration(
-                                      hintText: "FF Log Username",
-                                      border: OutlineInputBorder(),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            PlatformDialogAction(
-                              child: PlatformText("Cancel"),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                            PlatformDialogAction(
-                              child: PlatformText("Ok"),
-                              onPressed: () {
-                                FirebaseAuth.instance.currentUser().then((val) {
-                                  UserUpdateInfo updateUser = UserUpdateInfo();
-                                  updateUser.displayName =
-                                      displayNameController.text;
-                                  val.updateProfile(updateUser);
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
+                      if(isIOS) {
+                        Navigator.push(context,
+                            CupertinoPageRoute(builder: (context) => UpdateUsername())).then((value) {
+                          setState(() {
+                            username = value;
+                          });
+                        });
+                      } else {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => UpdateUsername()));
+                      }
                     },
                   ),
                 ),

@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
-  List<Widget> widgets = [PersonalLogPage(FirebaseAuthentication.currentUser.displayName, new FFLogZones()), SearchUsers(), ProfilePage()];
+  List<Widget> widgets = [PersonalLogPage(), SearchUsers(), ProfilePage()];
 
   @override
   Widget build(BuildContext context) {
