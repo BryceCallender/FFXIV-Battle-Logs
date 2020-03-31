@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:410092286683:android:394d85c8bda1f9d3f412fe",
         "android_client_info": {
-          "package_name": "com.example.ffxiv_battle_logs"
+          "package_name": "com.ffxivlogs.ffxivbattlelogs"
         }
       },
       "oauth_client": [

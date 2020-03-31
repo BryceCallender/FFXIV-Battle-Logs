@@ -38,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: Center(
           child: Container(
+            padding: const EdgeInsets.only(top: 8.0),
             child: Column(
               children: [
                 Text(username),
@@ -53,12 +54,20 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.push(context,
                             CupertinoPageRoute(builder: (context) => UpdateUsername())).then((value) {
                           setState(() {
-                            username = value;
+                            if(value != null) {
+                              username = value;
+                            }
                           });
                         });
                       } else {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => UpdateUsername()));
+                            MaterialPageRoute(builder: (context) => UpdateUsername())).then((value) {
+                          setState(() {
+                            if(value != null) {
+                              username = value;
+                            }
+                          });
+                        });
                       }
                     },
                   ),

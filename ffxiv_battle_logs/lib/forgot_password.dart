@@ -38,8 +38,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ios: (_) => CupertinoTextFieldData(placeholder: "Email"),
                 android: (_) => MaterialTextFieldData(
                   decoration: InputDecoration(
-                    hintText: "Email",
-                    prefix: Icon(Icons.email),
+                    labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
                 ),

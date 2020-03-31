@@ -92,12 +92,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       appBar: PlatformAppBar(
-          title: Text(widget.title),
-          backgroundColor: CupertinoColors.activeBlue,
-          ios: (_) => CupertinoNavigationBarData(
-            heroTag: "main",
-            transitionBetweenRoutes: false,
-          ),
+        title: Text(widget.title),
+        backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "main",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: SafeArea(
         child: Container(
@@ -149,118 +149,106 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (user == null) {
       return [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PlatformButton(
-            child: Text("Login"),
-            ios: (_) => CupertinoButtonData(
-              color: CupertinoColors.activeBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => Login(title: "Login Page"),
-                  ),
-                );
-              },
-            ),
-            android: (_) => MaterialRaisedButtonData(
-              color: Colors.blue,
-              splashColor: Colors.lightBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Login(title: "Login Page")),
-                );
-              },
-            ),
+        PlatformButton(
+          child: Text("Login"),
+          ios: (_) => CupertinoButtonData(
+            color: CupertinoColors.activeBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => Login(title: "Login Page"),
+                ),
+              );
+            },
+          ),
+          android: (_) => MaterialRaisedButtonData(
+            color: Colors.blue,
+            splashColor: Colors.lightBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Login(title: "Login Page")),
+              );
+            },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PlatformButton(
-            child: Text("Search"),
-            ios: (_) => CupertinoButtonData(
-              color: CupertinoColors.activeBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => SearchUsers(),
-                  ),
-                );
-              },
-            ),
-            android: (_) => MaterialRaisedButtonData(
-              color: Colors.blue,
-              splashColor: Colors.lightBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchUsers()),
-                );
-              },
-            ),
+        PlatformButton(
+          child: Text("Search"),
+          ios: (_) => CupertinoButtonData(
+            color: CupertinoColors.activeBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => SearchUsers(),
+                ),
+              );
+            },
+          ),
+          android: (_) => MaterialRaisedButtonData(
+            color: Colors.blue,
+            splashColor: Colors.lightBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchUsers()),
+              );
+            },
           ),
         ),
       ];
     } else {
       return [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PlatformButton(
-            child: Text(" Home "),
-            ios: (_) => CupertinoButtonData(
-              color: CupertinoColors.activeBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => HomePage(userName: user.displayName),
-                  ),
-                );
-              },
-            ),
-            android: (_) => MaterialRaisedButtonData(
-              color: Colors.blue,
-              splashColor: Colors.lightBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(userName: user.displayName),
-                  ),
-                );
-              },
-            ),
+        PlatformButton(
+          child: Text(" Home "),
+          ios: (_) => CupertinoButtonData(
+            color: CupertinoColors.activeBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => HomePage(userName: user.displayName),
+                ),
+              );
+            },
+          ),
+          android: (_) => MaterialRaisedButtonData(
+            color: Colors.blue,
+            splashColor: Colors.lightBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(userName: user.displayName),
+                ),
+              );
+            },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PlatformButton(
-            child: Text("Search"),
-            ios: (_) => CupertinoButtonData(
-              color: CupertinoColors.activeBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => SearchUsers(),
-                  ),
-                );
-              },
-            ),
-            android: (_) => MaterialRaisedButtonData(
-              color: Colors.blue,
-              splashColor: Colors.lightBlue,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchUsers()),
-                );
-              },
-            ),
+        PlatformButton(
+          child: Text("Search"),
+          ios: (_) => CupertinoButtonData(
+            color: CupertinoColors.activeBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => SearchUsers(),
+                ),
+              );
+            },
+          ),
+          android: (_) => MaterialRaisedButtonData(
+            color: Colors.blue,
+            splashColor: Colors.lightBlue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchUsers()),
+              );
+            },
           ),
         ),
       ];

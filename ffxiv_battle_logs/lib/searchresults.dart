@@ -25,15 +25,14 @@ class SearchResults extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       appBar: PlatformAppBar(
+        title: Text("Results for: $characterName"),
+        backgroundColor: CupertinoColors.activeBlue,
         ios: (_) => CupertinoNavigationBarData(
           title: Text("Results for: $characterName"),
             heroTag: "searchresults",
             transitionBetweenRoutes: false,
         ),
       ),
-//      appBar: AppBar(
-//        title: Text("Results for: $characterName"),
-//      ),
       body: FutureBuilder(
         future: getReports(),
         builder: (context, snapshot) {

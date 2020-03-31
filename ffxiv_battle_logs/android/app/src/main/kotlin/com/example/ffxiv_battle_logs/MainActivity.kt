@@ -1,4 +1,4 @@
-package com.example.ffxiv_battle_logs
+package com.ffxivlogs.ffxivbattlelogs
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

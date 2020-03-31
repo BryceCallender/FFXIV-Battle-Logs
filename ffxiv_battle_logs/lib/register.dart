@@ -53,7 +53,7 @@ class _RegisterState extends State<Register> {
                         CupertinoTextFieldData(placeholder: "FF Log username"),
                     android: (_) => MaterialTextFieldData(
                       decoration: InputDecoration(
-                        hintText: "FF Log username",
+                        labelText: "FF Log username",
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -89,7 +89,7 @@ class _RegisterState extends State<Register> {
                     ios: (_) => CupertinoTextFieldData(placeholder: "Email"),
                     android: (_) => MaterialTextFieldData(
                       decoration: InputDecoration(
-                        hintText: "Email",
+                        labelText: "Email",
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -100,38 +100,11 @@ class _RegisterState extends State<Register> {
                     ios: (_) => CupertinoTextFieldData(placeholder: "Password"),
                     android: (_) => MaterialTextFieldData(
                       decoration: InputDecoration(
-                        hintText: "Password",
+                        labelText: "Password",
                         border: OutlineInputBorder(),
                       ),
                     ),
                   ),
-//                  TextFormField(
-//                    decoration: InputDecoration(
-//                      border: OutlineInputBorder(),
-//                      labelText: 'Email',
-//                    ),
-//                    validator: (value) {
-//                      if (value.isEmpty) {
-//                        return "Please enter a email";
-//                      }
-//                      return null;
-//                    },
-//                    onSaved: (value) => _email = value.trim(),
-//                  ),
-//                  TextFormField(
-//                    obscureText: true,
-//                    decoration: InputDecoration(
-//                      border: OutlineInputBorder(),
-//                      labelText: 'Password',
-//                    ),
-//                    validator: (value) {
-//                      if (value.isEmpty) {
-//                        return "Please enter a password";
-//                      }
-//                      return null;
-//                    },
-//                    onSaved: (value) => _password = value,
-//                  ),
                   Text(
                     errorMessage,
                     style: TextStyle(color: Colors.red),
@@ -153,8 +126,7 @@ class _RegisterState extends State<Register> {
                           } else {
                             showSimpleNotification(
                                 Text("Please verify your FF Logs username"),
-                                background: Colors.red
-                            );
+                                background: Colors.red);
 //                          Scaffold.of(context).showSnackBar(
 //                            SnackBar(
 //                              content: Text(
@@ -180,12 +152,14 @@ class _RegisterState extends State<Register> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      if(emailController.text.length > 0
-          && passwordController.text.length > 0
-          && fflogUsernameController.text.length > 0) {
+      if (emailController.text.length > 0 &&
+          passwordController.text.length > 0 &&
+          fflogUsernameController.text.length > 0) {
         return true;
       } else {
-
+        setState(() {
+          errorMessage = "Please fill in all fields.";
+        });
       }
     }
     return false;
@@ -194,10 +168,12 @@ class _RegisterState extends State<Register> {
   void validateAndSubmit() async {
     if (validateAndSave() && _formKey.currentState.validate()) {
       FirebaseUser user = await _auth
-          .signUp(emailController.text, passwordController.text, fflogUsernameController.text)
+          .signUp(emailController.text, passwordController.text,
+              fflogUsernameController.text)
           .catchError((error) {
-            print(error.toString());
-        if (error is PlatformException) { //ERROR_WEAK_PASSWORD, ERROR_INVALID_EMAIL, ERROR_EMAIL_ALREADY_IN_USE errors caught
+        print(error.toString());
+        if (error is PlatformException) {
+          //ERROR_WEAK_PASSWORD, ERROR_INVALID_EMAIL, ERROR_EMAIL_ALREADY_IN_USE errors caught
           error = error as PlatformException;
           setState(() {
             errorMessage = error.message;
@@ -206,17 +182,7 @@ class _RegisterState extends State<Register> {
       });
 
       if (user != null) {
-        if (isIOS) {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => Login(title: "Login Page")));
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Login(title: "Login Page")));
-        }
+        Navigator.pop(context, true);
       }
     }
   }

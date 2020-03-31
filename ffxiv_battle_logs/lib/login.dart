@@ -9,13 +9,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:overlay_support/overlay_support.dart';
 
 bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
 
 class Login extends StatefulWidget {
   final String title;
+  final bool registered;
 
-  Login({Key key, this.title}) : super(key: key);
+  Login({Key key, this.title, this.registered = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LoginState();
@@ -27,6 +29,8 @@ class _LoginState extends State<Login> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  String errorMessage = "";
 
   @override
   void initState() {
@@ -44,82 +48,110 @@ class _LoginState extends State<Login> {
           transitionBetweenRoutes: false,
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              PlatformTextField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                ios: (_) => CupertinoTextFieldData(
-                  padding: const EdgeInsets.all(12.0),
-                  placeholder: "Email",
-                ),
-                android: (_) => MaterialTextFieldData(
-                  decoration: InputDecoration(
-                    hintText: "Email",
-                    prefix: Icon(Icons.email),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              PlatformTextField(
-                controller: passwordController,
-                obscureText: true,
-                keyboardType: TextInputType.text,
-                ios: (_) => CupertinoTextFieldData(
+      body: ListView(children: [
+        Form(
+          key: _formKey,
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                PlatformTextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  ios: (_) => CupertinoTextFieldData(
                     padding: const EdgeInsets.all(12.0),
-                    placeholder: "Password"),
-                android: (_) => MaterialTextFieldData(
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                    prefix: Icon(Icons.lock),
-                    border: OutlineInputBorder(),
+                    placeholder: "Email",
+                  ),
+                  android: (_) => MaterialTextFieldData(
+                    decoration: InputDecoration(
+                      labelText: "Email",
+                      hasFloatingPlaceholder: true,
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              PlatformButton(
-                child: Text("Forgot Password?"),
-                ios: (_) => CupertinoButtonData(onPressed: () {
-                  Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) => ForgotPassword()));
-                }),
-                android: (_) => MaterialRaisedButtonData(
-                  color: CupertinoColors.activeBlue,
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ForgotPassword()));
-                  },
+                PlatformTextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  keyboardType: TextInputType.text,
+                  ios: (_) => CupertinoTextFieldData(
+                      padding: const EdgeInsets.all(12.0),
+                      placeholder: "Password"),
+                  android: (_) => MaterialTextFieldData(
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      hasFloatingPlaceholder: true,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: PlatformButton(
-                  child: Text("Login"),
-                  color: CupertinoColors.activeBlue,
-                  onPressed: validateAndSubmit,
+                Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.red),
                 ),
-              ),
-              PlatformButton(
-                child: Text("Create an Account"),
-                ios: (_) => CupertinoButtonData(onPressed: () {
-                  Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) => Register()));
-                }),
-                android: (_) => MaterialRaisedButtonData(
-                  color: CupertinoColors.activeBlue,
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Register()));
-                  },
+                PlatformButton(
+                  child: Text("Forgot Password?"),
+                  ios: (_) => CupertinoButtonData(onPressed: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => ForgotPassword()));
+                  }),
+                  android: (_) => MaterialRaisedButtonData(
+                    color: CupertinoColors.activeBlue,
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPassword()));
+                    },
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: PlatformButton(
+                    child: Text("Login"),
+                    color: CupertinoColors.activeBlue,
+                    onPressed: validateAndSubmit,
+                  ),
+                ),
+                PlatformButton(
+                  child: Text("Create an Account"),
+                  ios: (_) => CupertinoButtonData(onPressed: () {
+                    Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => Register()))
+                        .then((registered) {
+                      if (registered != null && registered) {
+                        showSimpleNotification(
+                            Text("User account created successfully!"),
+                            background: Colors.green);
+                      }
+                    });
+                  }),
+                  android: (_) => MaterialRaisedButtonData(
+                    color: CupertinoColors.activeBlue,
+                    onPressed: () {
+                      Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Register()))
+                          .then((registered) {
+                        if (registered != null && registered) {
+                          showSimpleNotification(
+                              Text("User account created successfully!"),
+                              background: Colors.green);
+                        }
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      ]),
     );
   }
 
@@ -132,6 +164,14 @@ class _LoginState extends State<Login> {
         form.save();
         return true;
       } else {
+        setState(() {
+          if (emailController.text.length > 0 &&
+              !EmailValidator.validate(emailController.text)) {
+            errorMessage = "Badly formatted email.";
+          } else {
+            errorMessage = "Please fill in all fields.";
+          }
+        });
         return false;
       }
     }
@@ -144,6 +184,9 @@ class _LoginState extends State<Login> {
           await _auth.signIn(emailController.text, passwordController.text);
 
       if (user != null) {
+        setState(() {
+          errorMessage = "";
+        });
         print("Logged in ${user.displayName}");
         if (isIOS) {
           Navigator.pushReplacement(
@@ -157,6 +200,10 @@ class _LoginState extends State<Login> {
               MaterialPageRoute(
                   builder: (context) => HomePage(userName: user.displayName)));
         }
+      } else {
+        setState(() {
+          errorMessage = "Invalid username or password.";
+        });
       }
     }
   }
