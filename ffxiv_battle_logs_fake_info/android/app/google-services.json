@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "410092286683",
+    "firebase_url": "https://ffxiv-battle-logs.firebaseio.com",
+    "project_id": "ffxiv-battle-logs",
+    "storage_bucket": "ffxiv-battle-logs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410092286683:android:394d85c8bda1f9d3f412fe",
+        "android_client_info": {
+          "package_name": "com.ffxivlogs.ffxivbattlelogs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "410092286683-jjovoobfl47k9umntgqo514osabpng36.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5Fe6KGsXhYd5Dt6nMoUcL9-gn_qB6Eys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "410092286683-jjovoobfl47k9umntgqo514osabpng36.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
