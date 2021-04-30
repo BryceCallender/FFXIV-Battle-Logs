@@ -22,7 +22,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       appBar: PlatformAppBar(
         title: Text("Forgot password"),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "forgotpassword",
           transitionBetweenRoutes: false,
         ),
@@ -35,8 +35,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               PlatformTextField(
                 keyboardType: TextInputType.text,
                 controller: emailController,
-                ios: (_) => CupertinoTextFieldData(placeholder: "Email"),
-                android: (_) => MaterialTextFieldData(
+                cupertino: (_, __) => CupertinoTextFieldData(placeholder: "Email"),
+                material: (_, __) => MaterialTextFieldData(
                   decoration: InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(),

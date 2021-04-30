@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavBar: PlatformNavBar(
         itemChanged: onBarItemTapped,
         currentIndex: _currentIndex,
-        ios: (_) => CupertinoTabBarData(
+        cupertino: (_, __) => CupertinoTabBarData(
           items: [
             BottomNavigationBarItem(
               icon: new Icon(CupertinoIcons.home),
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        android: (_) => MaterialNavBarData(
+        material: (_, __) => MaterialNavBarData(
           items: [
             BottomNavigationBarItem(
               icon: new Icon(Icons.home),

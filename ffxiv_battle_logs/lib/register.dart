@@ -49,9 +49,9 @@ class _RegisterState extends State<Register> {
                 children: <Widget>[
                   PlatformTextField(
                     controller: fflogUsernameController,
-                    ios: (_) =>
+                    cupertino: (_, __) =>
                         CupertinoTextFieldData(placeholder: "FF Log username"),
-                    android: (_) => MaterialTextFieldData(
+                    material: (_, __) => MaterialTextFieldData(
                       decoration: InputDecoration(
                         labelText: "FF Log username",
                         border: OutlineInputBorder(),
@@ -86,8 +86,8 @@ class _RegisterState extends State<Register> {
                   ),
                   PlatformTextField(
                     controller: emailController,
-                    ios: (_) => CupertinoTextFieldData(placeholder: "Email"),
-                    android: (_) => MaterialTextFieldData(
+                    cupertino: (_, __) => CupertinoTextFieldData(placeholder: "Email"),
+                    material: (_, __) => MaterialTextFieldData(
                       decoration: InputDecoration(
                         labelText: "Email",
                         border: OutlineInputBorder(),
@@ -97,8 +97,8 @@ class _RegisterState extends State<Register> {
                   PlatformTextField(
                     controller: passwordController,
                     obscureText: true,
-                    ios: (_) => CupertinoTextFieldData(placeholder: "Password"),
-                    android: (_) => MaterialTextFieldData(
+                    cupertino: (_, __) => CupertinoTextFieldData(placeholder: "Password"),
+                    material: (_, __) => MaterialTextFieldData(
                       decoration: InputDecoration(
                         labelText: "Password",
                         border: OutlineInputBorder(),

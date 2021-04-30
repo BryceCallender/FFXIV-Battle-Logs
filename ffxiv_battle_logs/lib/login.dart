@@ -43,7 +43,7 @@ class _LoginState extends State<Login> {
       appBar: PlatformAppBar(
         title: Text(widget.title),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "login",
           transitionBetweenRoutes: false,
         ),
@@ -58,11 +58,11 @@ class _LoginState extends State<Login> {
                 PlatformTextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  ios: (_) => CupertinoTextFieldData(
+                  cupertino: (_, __) => CupertinoTextFieldData(
                     padding: const EdgeInsets.all(12.0),
                     placeholder: "Email",
                   ),
-                  android: (_) => MaterialTextFieldData(
+                  material: (_, __) => MaterialTextFieldData(
                     decoration: InputDecoration(
                       labelText: "Email",
                       hasFloatingPlaceholder: true,
@@ -74,10 +74,10 @@ class _LoginState extends State<Login> {
                   controller: passwordController,
                   obscureText: true,
                   keyboardType: TextInputType.text,
-                  ios: (_) => CupertinoTextFieldData(
+                  cupertino: (_, __) => CupertinoTextFieldData(
                       padding: const EdgeInsets.all(12.0),
                       placeholder: "Password"),
-                  android: (_) => MaterialTextFieldData(
+                  material: (_, __) => MaterialTextFieldData(
                     decoration: InputDecoration(
                       labelText: "Password",
                       hasFloatingPlaceholder: true,
@@ -91,13 +91,13 @@ class _LoginState extends State<Login> {
                 ),
                 PlatformButton(
                   child: Text("Forgot Password?"),
-                  ios: (_) => CupertinoButtonData(onPressed: () {
+                  cupertino: (_, __) => CupertinoButtonData(onPressed: () {
                     Navigator.push(
                         context,
                         CupertinoPageRoute(
                             builder: (context) => ForgotPassword()));
                   }),
-                  android: (_) => MaterialRaisedButtonData(
+                  material: (_, __) => MaterialRaisedButtonData(
                     color: CupertinoColors.activeBlue,
                     onPressed: () {
                       Navigator.push(
@@ -117,7 +117,7 @@ class _LoginState extends State<Login> {
                 ),
                 PlatformButton(
                   child: Text("Create an Account"),
-                  ios: (_) => CupertinoButtonData(onPressed: () {
+                  cupertino: (_, __) => CupertinoButtonData(onPressed: () {
                     Navigator.push(
                             context,
                             CupertinoPageRoute(
@@ -130,7 +130,7 @@ class _LoginState extends State<Login> {
                       }
                     });
                   }),
-                  android: (_) => MaterialRaisedButtonData(
+                  material: (_, __) => MaterialRaisedButtonData(
                     color: CupertinoColors.activeBlue,
                     onPressed: () {
                       Navigator.push(

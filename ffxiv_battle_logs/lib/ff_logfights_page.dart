@@ -25,7 +25,7 @@ class FFLogFightsPage extends StatelessWidget {
       appBar: PlatformAppBar(
         title: Text(report.title),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "fights",
           transitionBetweenRoutes: false,
         ),
@@ -175,10 +175,10 @@ class FFLogFightsPage extends StatelessWidget {
   }
 
   Future<FFLogFight> getFights() async {
-    http.Response response = await http.get(
+    http.Response response = await http.get(Uri.parse(
         "https://www.fflogs.com/v1/report/fights/" +
             report.id +
-            "?api_key=a468c182a1d6b2464526fb12ce56044f");
+            "?api_key=a468c182a1d6b2464526fb12ce56044f"));
 
     var fightData = jsonDecode(response.body);
 

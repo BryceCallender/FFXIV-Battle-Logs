@@ -30,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: PlatformAppBar(
         title: Text("Profile"),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "profile",
           transitionBetweenRoutes: false,
         ),

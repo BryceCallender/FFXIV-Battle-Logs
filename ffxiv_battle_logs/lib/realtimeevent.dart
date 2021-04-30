@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:async/async.dart';
@@ -9,6 +10,9 @@ import 'package:ffxiv_battle_logs/report_data_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
+import 'SkillDamageChart.dart';
 
 class RealTimeEventSystem extends StatefulWidget {
   final String playerName;
@@ -20,11 +24,11 @@ class RealTimeEventSystem extends StatefulWidget {
 
   RealTimeEventSystem(
       {this.playerName,
-      this.reportID,
-      this.start,
-      this.end,
-      this.sourceID,
-      this.className});
+        this.reportID,
+        this.start,
+        this.end,
+        this.sourceID,
+        this.className});
 
   @override
   _RealTimeEventSystemState createState() => _RealTimeEventSystemState();
@@ -37,7 +41,10 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
   List<charts.Series<DPSEvent, String>> dpsData = [];
   DPSEvent currentDPSData;
 
-  final AsyncMemoizer<List<FFLogDamageDoneEvent>> _memoizer = AsyncMemoizer();
+  Map<Ability, AbilityDamageInformation> skillDamageMap =
+  new Map<Ability, AbilityDamageInformation>();
+
+  final AsyncMemoizer<List<FFLogEvent>> _memoizer = AsyncMemoizer();
 
   @override
   void initState() {
@@ -49,6 +56,7 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
   @override
   Widget build(BuildContext context) {
     var data = [currentDPSData];
+    var brightness = MediaQuery.of(context).platformBrightness;
 
     var series = [
       charts.Series(
@@ -59,11 +67,42 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
         colorFn: ((DPSEvent dps, _) => charts.Color.fromHex(
             code: FFXIVClass.classToColor(widget.className))),
         labelAccessorFn: (DPSEvent dps, _) =>
-            "DPS: ${currentDPSData.DPS.toStringAsFixed(1)}",
+        "DPS: ${currentDPSData.DPS.toStringAsFixed(1)}",
         insideLabelStyleAccessorFn: (DPSEvent dps, _) {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
       ),
+    ];
+
+    List<SkillInfo> skills = [];
+    skillDamageMap.forEach((key, value) => skills.add(SkillInfo(key, value)));
+
+    skills.sort((a, b) => b.abilityDamageInformation.percentage
+        .compareTo(a.abilityDamageInformation.percentage));
+
+    var skillSeries = [
+      charts.Series(
+        id: "skills",
+        data: skills,
+        domainFn: (SkillInfo skillInfo, _) => skillInfo.ability.name.length < 15
+            ? skillInfo.ability.name
+            : skillInfo.ability.name.substring(0, 12) + "...",
+        measureFn: (SkillInfo skillInfo, _) =>
+        skillInfo.abilityDamageInformation.percentage,
+        colorFn: (SkillInfo skillInfo, _) =>
+            charts.Color.fromHex(code: "#FFA500"),
+        labelAccessorFn: (SkillInfo skillInfo, _) =>
+        "${NumberFormat.compact().format(skillInfo.abilityDamageInformation.totalDamage)}(${NumberFormat.compact().format(skillInfo.abilityDamageInformation.dps)}, ${skillInfo.abilityDamageInformation.percentage.truncate()}%)",
+        insideLabelStyleAccessorFn: (SkillInfo skillInfo, _) {
+          return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
+        },
+        outsideLabelStyleAccessorFn: (SkillInfo skillInfo, _) {
+          return new charts.TextStyleSpec(
+              color: brightness == Brightness.dark
+                  ? charts.MaterialPalette.white
+                  : charts.MaterialPalette.black);
+        },
+      )
     ];
 
     return ListView(
@@ -79,7 +118,20 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
         SizedBox(
           height: 100,
           child:
-              Stack(alignment: Alignment.centerRight, children: usedAbilities),
+          Stack(alignment: Alignment.centerRight, children: usedAbilities),
+        ),
+        SizedBox(height: 50.0),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Center(child: Text("Skill Breakdown")),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          child: SizedBox(
+            height: 300,
+            child:
+            SkillDamageChart(skillSeries, animate: true, vertical: false),
+          ),
         ),
         SizedBox(height: 50),
         FutureBuilder(
@@ -119,14 +171,14 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
     );
   }
 
-  Future<List<FFLogDamageDoneEvent>> getEventData() {
+  Future<List<FFLogEvent>> getEventData() {
     return _memoizer.runOnce(() async {
       print("Running to get event data!");
 
-      List<FFLogDamageDoneEvent> eventData = [];
+      List<FFLogEvent> eventData = [];
 
       http.Response response = await http.get(
-          "https://www.fflogs.com/v1/report/events/summary/${widget.reportID}?start=${widget.start}&end=${widget.end}&sourceid=${widget.sourceID}&api_key=a468c182a1d6b2464526fb12ce56044f");
+          Uri.parse("https://www.fflogs.com/v1/report/events/summary/${widget.reportID}?start=${widget.start}&end=${widget.end}&sourceid=${widget.sourceID}&api_key=a468c182a1d6b2464526fb12ce56044f"));
 
       print(
           "https://www.fflogs.com/v1/report/events/summary/${widget.reportID}?start=${widget.start}&end=${widget.end}&sourceid=${widget.sourceID}&api_key=a468c182a1d6b2464526fb12ce56044f");
@@ -134,20 +186,20 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
       var events = jsonDecode(response.body)["events"] as List;
 
       events.forEach((event) {
-        eventData.add(FFLogDamageDoneEvent.fromJson(event));
+        eventData.add(FFLogEvent.fromJson(event));
       });
 
       calculateDPSFromEvents(eventData);
-      showSkillsFromEvents(eventData);
+      //showSkillsFromEvents(eventData);
 
       return eventData;
     });
   }
 
-  void calculateDPSFromEvents(List<FFLogDamageDoneEvent> eventData) async {
+  void calculateDPSFromEvents(List<FFLogEvent> eventData) async {
     eventData = eventData
         .where((event) =>
-            (event.type == "damage") && event.sourceID == widget.sourceID)
+    (event.type == "damage") && event.sourceID == widget.sourceID)
         .toList();
 
     int totalDamage = 0;
@@ -159,34 +211,65 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
       //If we have data
       if (eventData.isNotEmpty) {
         //grab and store the data
-        FFLogDamageDoneEvent event = eventData[eventIndex];
+        FFLogEvent event = eventData[eventIndex];
         //If we hit the event we want to display it
-        if (currentMillis == event.timeStamp) {
+        if (currentMillis == event.timestamp) {
           if (event.type == "damage") {
-            setState(() {
-              totalDamage += event.amount;
-              int eventTime = event.timeStamp - widget.start;
-              int second = (eventTime ~/ 1000);
-              if (second != 0) {
-                currentDPSData.DPS = totalDamage ~/ second;
-              }
-              Duration duration =
-                  new Duration(milliseconds: (currentMillis - widget.start));
-              currentDPSTime =
-                  duration.toString().split('.').first.padLeft(8, "0");
+            totalDamage += event.amount;
+            int eventTime = event.timestamp - widget.start;
+            int second = (eventTime ~/ 1000);
 
-              textTimeEvents.add(Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                      "[${duration.toString().substring(0, 11).padLeft(12, "0")}]: "),
-                  Image.asset(
-                      "assets/images/class_action_icons/${event.ability.abilityIcon}"),
-                  Text(" hit for ${event.amount}")
-                ],
-              ));
+            skillDamageMap.forEach((ability, damageInformation) {
+              damageInformation.dps =
+                  damageInformation.totalDamage / (second == 0 ? 1 : second);
+
+              damageInformation.percentage =
+                  (damageInformation.totalDamage / totalDamage) * 100;
             });
+
+            skillDamageMap.update(
+              event.ability,
+                  (oldAbilityDamageInformation) {
+                oldAbilityDamageInformation.totalDamage += event.amount;
+                oldAbilityDamageInformation.dps =
+                    oldAbilityDamageInformation.totalDamage /
+                        (second == 0 ? 1 : second);
+                oldAbilityDamageInformation.percentage =
+                    (oldAbilityDamageInformation.totalDamage / totalDamage) *
+                        100;
+
+                return oldAbilityDamageInformation;
+              },
+              ifAbsent: () {
+                print(event.ability.name + " added to the map");
+                return AbilityDamageInformation(
+                    event.amount,
+                    event.amount / (second == 0 ? 1 : second),
+                    (event.amount / totalDamage * 100));
+              },
+            );
+
+//            setState(() {
+            if (second != 0) {
+              currentDPSData.DPS = totalDamage ~/ second;
+            }
+            Duration duration =
+            new Duration(milliseconds: (currentMillis - widget.start));
+            currentDPSTime =
+                duration.toString().split('.').first.padLeft(8, "0");
+
+            textTimeEvents.add(Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                    "[${duration.toString().substring(0, 11).padLeft(12, "0")}]: "),
+                Image.asset(
+                    "assets/images/class_action_icons/${event.ability.abilityIcon}"),
+                Text(" hit for ${event.amount}")
+              ],
+            ));
+//            });
           }
           eventIndex++;
         } else {
@@ -194,7 +277,7 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
           if (currentMillis % 1000 == 0) {
             setState(() {
               Duration duration =
-                  new Duration(milliseconds: (currentMillis - widget.start));
+              new Duration(milliseconds: (currentMillis - widget.start));
               currentDPSTime =
                   duration.toString().split('.').first.padLeft(8, "0");
             });
@@ -206,48 +289,25 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
       }
     }
 
-    //Good code for a second per tick
-//    for (FFLogDamageDoneEvent event in eventData) {
-//      int eventTime = event.timeStamp - startTime;
-//      int second = (eventTime ~/ 1000);
-////      print(second);
-////      print(event.ability.name +
-////          " was used with " +
-////          event.amount.toString() +
-////          " damage");
-//      totalDamage += event.amount;
-//
-//      for (; currentTime < second; currentTime++) {
-//        setState(() {
-//          Duration duration = new Duration(seconds: currentTime);
-//          currentDPSTime = duration.toString().split('.').first.padLeft(8, "0");
-//        });
-//        await Future.delayed(Duration(seconds: 1));
-//      }
-//
-//      if (currentTime == second) {
-//        setState(() {
-//          if (second != 0) {
-//            currentDPSData.DPS = totalDamage ~/ second;
-//          }
-//          Duration duration = new Duration(seconds: currentTime);
-//          currentDPSTime = duration.toString().split('.').first.padLeft(8, "0");
-//          //print("DPS: ${currentDPSData.DPS} Time: $currentDPSTime");
-//        });
-//      }
-//    }
+//    setState(() {
+    //Find out the totalDamage at the end of everything even after dying
+    currentDPSData.DPS = totalDamage ~/ ((widget.end - widget.start) / 1000);
+    //print("Final DPS: ${currentDPSData.DPS}");
 
-    setState(() {
-      //Find out the totalDamage at the end of everything even after dying
-      currentDPSData.DPS = totalDamage ~/ ((widget.end - widget.start) / 1000);
-      //print("Final DPS: ${currentDPSData.DPS}");
+    skillDamageMap.forEach((ability, damageInformation) {
+      damageInformation.dps = damageInformation.totalDamage /
+          ((widget.end - widget.start) / 1000);
+
+      damageInformation.percentage =
+          (damageInformation.totalDamage / totalDamage) * 100;
     });
+//    });
   }
 
-  void showSkillsFromEvents(List<FFLogDamageDoneEvent> eventData) async {
+  void showSkillsFromEvents(List<FFLogEvent> eventData) async {
     eventData = eventData
         .where((event) =>
-            event.type == "cast" && event.sourceID == widget.sourceID)
+    event.type == "cast" && event.sourceID == widget.sourceID)
         .toList();
     double heightSlide = 0.0;
     int eventIndex = 0;
@@ -258,11 +318,11 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
       //If we have data
       if (eventData.isNotEmpty) {
         //grab and store the data
-        FFLogDamageDoneEvent event = eventData[eventIndex];
+        FFLogEvent event = eventData[eventIndex];
         //If we hit the event we want to display it
-        if (currentMillis == event.timeStamp) {
+        if (currentMillis == event.timestamp) {
           Duration duration =
-              new Duration(milliseconds: (currentMillis - widget.start));
+          new Duration(milliseconds: (currentMillis - widget.start));
           textTimeEvents.add(Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -280,13 +340,13 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
             heightSlide = 0.0;
           }
           //print("Casted: ${event.ability.name}");
-          setState(() {
-            usedAbilities.add(SlidingAbilities(
-              abilityPath:
-                  "assets/images/class_action_icons/${event.ability.abilityIcon}",
-              heightSlide: heightSlide,
-            ));
-          });
+//          setState(() {
+          usedAbilities.add(SlidingAbilities(
+            abilityPath:
+            "assets/images/class_action_icons/${event.ability.abilityIcon}",
+            heightSlide: heightSlide,
+          ));
+//          });
           previousEventMillis = currentMillis;
           eventIndex++;
         } else {

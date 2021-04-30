@@ -22,28 +22,29 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-  charts_flutter: ^0.8.1
-  http: ^0.12.0+4
-  flutter_launcher_icons: ^0.7.4
-  async: ^2.4.0
-  intl: ^0.16.1
-#
-#  # Check that you have this dependency (added in the previous step)
+  cupertino_icons: ^1.0.2
+  charts_flutter: ^0.10.0
+  http: ^0.13.2
+  flutter_launcher_icons: ^0.9.0
+  async: ^2.5.0
+  intl: ^0.17.0
+
+  #
+  #  # Check that you have this dependency (added in the previous step)
   firebase_core: ^0.4.0+9
 
-#  # Add the dependencies for any other Firebase products you want to use in your app
-#  # For example, to use Firebase Authentication and Cloud Firestore
+  #  # Add the dependencies for any other Firebase products you want to use in your app
+  #  # For example, to use Firebase Authentication and Cloud Firestore
   firebase_auth: ^0.14.0+5
   firebase_database: ^3.1.1
 
   google_sign_in: ^4.1.1
-  tuple: ^1.0.3
-  percent_indicator: ^2.1.1+1
+  tuple: ^2.0.0
+  percent_indicator: ^3.0.1
 
   shared_preferences: ^0.5.6+2
   provider: ^4.0.4
-  flutter_platform_widgets: ^0.32.4
+  flutter_platform_widgets: ^1.5.0
   email_validator: ^1.0.0
   overlay_support: ^1.0.3
 
@@ -72,6 +73,7 @@ flutter:
     - assets/images/banners/112000/
     - assets/images/banners/113000/
     - assets/images/map_icons/060000/
+    - assets/images/map_icons/
     - assets/images/class_action_icons/000000/
     - assets/images/class_action_icons/001000/
     - assets/images/class_action_icons/002000/

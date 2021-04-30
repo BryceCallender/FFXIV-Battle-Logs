@@ -1,4 +1,6 @@
+import 'package:ffxiv_battle_logs/DeathSection.dart';
 import 'package:ffxiv_battle_logs/FFXIVPartySection.dart';
+import 'package:ffxiv_battle_logs/bossactions.dart';
 import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/ffxiv_classes.dart';
 import 'package:ffxiv_battle_logs/report_data_chart.dart';
@@ -19,10 +21,10 @@ class SpecificFightReport extends StatefulWidget {
 
   SpecificFightReport(
       {Key key,
-      @required this.ffLogFightData,
-      @required this.partyMembers,
-      @required this.reportID,
-      this.ffxivParty});
+        @required this.ffLogFightData,
+        @required this.partyMembers,
+        @required this.reportID,
+        this.ffxivParty});
 
   @override
   _SpecificFightReportState createState() => _SpecificFightReportState();
@@ -44,7 +46,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
       appBar: PlatformAppBar(
         title: Text("Fight #" + widget.ffLogFightData.id.toString()),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "specificfight",
           transitionBetweenRoutes: false,
         ),
@@ -80,7 +82,8 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 8.0),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 20, bottom: 8.0),
                       child: SizedBox(
                         height: 400,
                         child: ReportDataChart(snapshot.data, vertical: false),
@@ -123,7 +126,56 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           Divider(
             thickness: 3.0,
           ),
-          getPartyWidget()
+          getPartyWidget(),
+          SizedBox(height: 20),
+//          Container(
+//            decoration: BoxDecoration(
+//              boxShadow: [
+//                BoxShadow(
+//                  color: Colors.yellow.withAlpha(200),
+//                  blurRadius: 10.0,
+//                  spreadRadius: 0.0,
+//                ),
+//              ],
+//            ),
+//            child: Card(
+//              color: brightness == Brightness.dark
+//                  ? ThemeData.dark().cardColor
+//                  : ThemeData.light().cardColor,
+//              child: ListTile(
+//                title: Text(widget.ffLogFightData.name,
+//                    style: Styles.getTextStyleFromBrightness(context)),
+//                leading: Image.asset(widget.ffLogFightData.zoneName.contains("Extreme")
+//                    ? "assets/images/map_icons/trial.png"
+//                    : "assets/images/map_icons/high_end_duty.png",
+//                    width: 40, height: 40),
+//                trailing: isIOS
+//                    ? Icon(CupertinoIcons.forward,
+//                    color: Styles.getColorFromBrightness(context))
+//                    : Icon(Icons.keyboard_arrow_right,
+//                    color: Styles.getColorFromBrightness(context)),
+//                onTap: () {
+//                  if (isIOS) {
+//                    Navigator.push(
+//                      context,
+//                      CupertinoPageRoute(
+//                        builder: (context) => BossActions(reportID: widget.reportID, fightData: widget.ffLogFightData, partyMembers: widget.partyMembers)
+//                      ),
+//                    );
+//                  } else {
+//                    Navigator.push(
+//                      context,
+//                      MaterialPageRoute(
+//                        builder: (context) => BossActions(reportID: widget.reportID, fightData: widget.ffLogFightData, partyMembers: widget.partyMembers)
+//                      ),
+//                    );
+//                  }
+//                },
+//              ),
+//            ),
+//          ),
+          DeathSection(
+              reportID: widget.reportID, fightData: widget.ffLogFightData)
         ],
       ),
     );
@@ -148,14 +200,22 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
   Future<List<charts.Series>> getGraphData() async {
     if (hpsData == null && dpsData == null) {
-      http.Response response = await http.get(
+      http.Response response = await http.get(Uri.parse(
           "https://www.fflogs.com/v1/report/tables/damage-done/" +
               widget.reportID +
               "?start=" +
               widget.ffLogFightData.start.toString() +
               "&end=" +
               widget.ffLogFightData.end.toString() +
-              "&api_key=a468c182a1d6b2464526fb12ce56044f");
+              "&api_key=a468c182a1d6b2464526fb12ce56044f"));
+
+      print("https://www.fflogs.com/v1/report/tables/damage-done/" +
+          widget.reportID +
+          "?start=" +
+          widget.ffLogFightData.start.toString() +
+          "&end=" +
+          widget.ffLogFightData.end.toString() +
+          "&api_key=a468c182a1d6b2464526fb12ce56044f");
 
       var entryList = jsonDecode(response.body)["entries"] as List;
 
@@ -199,7 +259,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
         measureFn: ((DPSInfo dps, _) => dps.DPS),
         colorFn: ((DPSInfo dps, _) => dps.color),
         labelAccessorFn: (DPSInfo dps, _) =>
-            "DPS: ${dps.DPS.toStringAsFixed(1)}",
+        "DPS: ${dps.DPS.toStringAsFixed(1)}",
         insideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },
@@ -219,7 +279,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
           measureFn: ((DPSInfo dps, _) => dps.rDPS),
           colorFn: ((DPSInfo dps, _) => dps.color),
           labelAccessorFn: (DPSInfo dps, _) =>
-              "RDPS: ${dps.rDPS.toStringAsFixed(1)}",
+          "RDPS: ${dps.rDPS.toStringAsFixed(1)}",
           insideLabelStyleAccessorFn: (DPSInfo dpsInfo, _) {
             return new charts.TextStyleSpec(
                 color: charts.MaterialPalette.black);
@@ -235,14 +295,14 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
 
       dpsData = chartData;
 
-      response = await http.get(
+      response = await http.get(Uri.parse(
           "https://www.fflogs.com/v1/report/tables/healing/" +
               widget.reportID +
               "?start=" +
               widget.ffLogFightData.start.toString() +
               "&end=" +
               widget.ffLogFightData.end.toString() +
-              "&api_key=a468c182a1d6b2464526fb12ce56044f");
+              "&api_key=a468c182a1d6b2464526fb12ce56044f"));
 
       entryList = jsonDecode(response.body)["entries"] as List;
 
@@ -296,7 +356,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
         measureFn: ((HPSInfo hps, _) => hps.HPS),
         colorFn: ((HPSInfo hps, _) => hps.color),
         labelAccessorFn: (HPSInfo hps, _) =>
-            "HPS: ${hps.HPS.toStringAsFixed(1)}",
+        "HPS: ${hps.HPS.toStringAsFixed(1)}",
         insideLabelStyleAccessorFn: (HPSInfo hps, _) {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.black);
         },

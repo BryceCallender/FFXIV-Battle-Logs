@@ -44,7 +44,7 @@ class FFXIVPartySection extends StatelessWidget {
         constraints: BoxConstraints.expand(height: 100.0),
         decoration: BoxDecoration(color: Colors.transparent),
         child: Image.asset(
-          "assets/images/class_icons/tank.png",
+          "assets/images/class_icons/Tank_Icon_1.png",
           fit: BoxFit.contain,
         ),
       ),
@@ -188,7 +188,7 @@ class FFXIVPartySection extends StatelessWidget {
         constraints: BoxConstraints.expand(height: 100.0),
         decoration: BoxDecoration(color: Colors.transparent),
         child: Image.asset(
-          "assets/images/class_icons/healer.png",
+          "assets/images/class_icons/Healer_Icon_1.png",
           fit: BoxFit.contain,
         ),
       ),
@@ -396,7 +396,7 @@ class FFXIVPartySection extends StatelessWidget {
       constraints: BoxConstraints.expand(height: 100.0),
       decoration: BoxDecoration(color: Colors.transparent),
       child: Image.asset(
-        "assets/images/class_icons/dps.png",
+        "assets/images/class_icons/Dps_Icon_1.png",
         fit: BoxFit.contain,
       ),
     ));

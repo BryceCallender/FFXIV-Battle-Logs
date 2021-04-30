@@ -19,7 +19,7 @@ class SearchResults extends StatelessWidget {
   FFLogZones zoneData = FFLogZones();
 
   SearchResults(this.characterName, this.serverName, this.serverRegion,
-      {this.zoneNumber = 33});
+      {this.zoneNumber = 38});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class SearchResults extends StatelessWidget {
       appBar: PlatformAppBar(
         title: Text("Results for: $characterName"),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           title: Text("Results for: $characterName"),
             heroTag: "searchresults",
             transitionBetweenRoutes: false,
@@ -130,9 +130,9 @@ class SearchResults extends StatelessWidget {
   Future<List<FFLogParseReport>> getReports() async {
     List<FFLogParseReport> reports = [];
 
-    http.Response response = await http.get(
+    http.Response response = await http.get(Uri.parse(
         "https://www.fflogs.com/v1/parses/character/$characterName/$serverName/$serverRegion" +
-            "?zone=$zoneNumber&api_key=a468c182a1d6b2464526fb12ce56044f");
+            "?zone=$zoneNumber&api_key=a468c182a1d6b2464526fb12ce56044f"));
 
     var reportList = jsonDecode(response.body) as List;
 

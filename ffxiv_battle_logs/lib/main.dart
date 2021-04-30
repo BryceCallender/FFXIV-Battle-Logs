@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       child: PlatformApp(
         home: MyHomePage(title: "FFXIV Battle Logs"),
         debugShowCheckedModeBanner: false,
-        ios: (_) => CupertinoAppData(
+        cupertino: (_, __) => CupertinoAppData(
           theme: CupertinoThemeData(
               primaryColor: CupertinoColors.activeBlue,
               textTheme: CupertinoTextThemeData(
@@ -67,7 +67,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                           : Colors.black),
               brightness: WidgetsBinding.instance.window.platformBrightness),
         ),
-        android: (_) => MaterialAppData(
+        material: (_, __) => MaterialAppData(
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
         ),
@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: PlatformAppBar(
         title: Text(widget.title),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "main",
           transitionBetweenRoutes: false,
         ),
@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return [
         PlatformButton(
           child: Text("Login"),
-          ios: (_) => CupertinoButtonData(
+          cupertino: (_, __) => CupertinoButtonData(
             color: CupertinoColors.activeBlue,
             onPressed: () {
               Navigator.push(
@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-          android: (_) => MaterialRaisedButtonData(
+          material: (_, __) => MaterialRaisedButtonData(
             color: Colors.blue,
             splashColor: Colors.lightBlue,
             onPressed: () {
@@ -176,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         PlatformButton(
           child: Text("Search"),
-          ios: (_) => CupertinoButtonData(
+          cupertino: (_, __) => CupertinoButtonData(
             color: CupertinoColors.activeBlue,
             onPressed: () {
               Navigator.push(
@@ -187,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-          android: (_) => MaterialRaisedButtonData(
+          material: (_, __) => MaterialRaisedButtonData(
             color: Colors.blue,
             splashColor: Colors.lightBlue,
             onPressed: () {
@@ -203,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return [
         PlatformButton(
           child: Text(" Home "),
-          ios: (_) => CupertinoButtonData(
+          cupertino: (_, __) => CupertinoButtonData(
             color: CupertinoColors.activeBlue,
             onPressed: () {
               Navigator.push(
@@ -214,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-          android: (_) => MaterialRaisedButtonData(
+          material: (_, __) => MaterialRaisedButtonData(
             color: Colors.blue,
             splashColor: Colors.lightBlue,
             onPressed: () {
@@ -229,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         PlatformButton(
           child: Text("Search"),
-          ios: (_) => CupertinoButtonData(
+          cupertino: (_, __) => CupertinoButtonData(
             color: CupertinoColors.activeBlue,
             onPressed: () {
               Navigator.push(
@@ -240,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-          android: (_) => MaterialRaisedButtonData(
+          material: (_, __) => MaterialRaisedButtonData(
             color: Colors.blue,
             splashColor: Colors.lightBlue,
             onPressed: () {

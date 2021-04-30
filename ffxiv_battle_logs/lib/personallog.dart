@@ -41,7 +41,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
       appBar: PlatformAppBar(
         title: Text(widget.userName + " Personal Logs"),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "personalLog",
           transitionBetweenRoutes: false,
         ),
@@ -92,8 +92,8 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                               child: Image.asset(
                                   widget.zoneData.isZoneExtreme(
                                           snapshot.data[index].zone)
-                                      ? "assets/images/map_icons/060000/060834.png"
-                                      : "assets/images/map_icons/060000/060855.png",
+                                      ? "assets/images/map_icons/trial.png"
+                                      : "assets/images/map_icons/high_end_duty.png",
                                   fit: BoxFit.cover),
                             ),
                             title: Text(widget.zoneData
@@ -140,10 +140,10 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
   Future<List<FFLogReport>> getReports() async {
     List<FFLogReport> reports = [];
 
-    http.Response response = await http.get(
+    http.Response response = await http.get(Uri.parse(
         "https://www.fflogs.com/v1/reports/user/" +
             widget.userName +
-            "?api_key=a468c182a1d6b2464526fb12ce56044f");
+            "?api_key=a468c182a1d6b2464526fb12ce56044f"));
 
     var reportList = jsonDecode(response.body) as List;
 

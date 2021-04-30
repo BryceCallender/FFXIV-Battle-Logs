@@ -28,9 +28,9 @@ class _SearchUserStats extends State<SearchUsers> {
 
   var worldScrollController = FixedExtentScrollController();
   var serverScrollController = FixedExtentScrollController();
-  var zoneScrollController = FixedExtentScrollController(initialItem: 33);
+  var zoneScrollController = FixedExtentScrollController(initialItem: 34);
 
-  Tuple2<String, int> zoneID = Tuple2<String, int>("Eden's Verse", 33);
+  Tuple2<String, int> zoneID = Tuple2<String, int>("Eden's Promise", 38);
 
   final List<String> worlds = [
     "Adamantoise",
@@ -119,14 +119,14 @@ class _SearchUserStats extends State<SearchUsers> {
             padding: const EdgeInsets.all(16.0),
             child: PlatformTextField(
               controller: nameController,
-              ios: (_) => CupertinoTextFieldData(
+              cupertino: (_, __) => CupertinoTextFieldData(
                   keyboardType: TextInputType.text,
                   prefix: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(CupertinoIcons.search),
                   ),
                   placeholder: "Character name"),
-              android: (_) => MaterialTextFieldData(
+              material: (_, __) => MaterialTextFieldData(
                   keyboardType: TextInputType.text,
                   controller: nameController,
                   decoration: InputDecoration(
@@ -141,7 +141,7 @@ class _SearchUserStats extends State<SearchUsers> {
             padding: const EdgeInsets.all(16.0),
             child: PlatformButton(
               child: Text("Submit"),
-              ios: (_) => CupertinoButtonData(
+              cupertino: (_, __) => CupertinoButtonData(
                 color: CupertinoColors.activeBlue,
                 onPressed: () {
                   Navigator.push(
@@ -154,7 +154,7 @@ class _SearchUserStats extends State<SearchUsers> {
                   );
                 },
               ),
-              android: (_) => MaterialRaisedButtonData(
+              material: (_, __) => MaterialRaisedButtonData(
                   color: Colors.blue,
                   splashColor: Colors.lightBlue,
                   onPressed: () {

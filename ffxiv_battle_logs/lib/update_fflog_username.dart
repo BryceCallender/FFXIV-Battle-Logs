@@ -20,7 +20,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
       appBar: PlatformAppBar(
         title: Text("Update FF Logs Username"),
         backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
+        cupertino: (_, __) => CupertinoNavigationBarData(
           heroTag: "updateusername",
           transitionBetweenRoutes: false,
         ),
@@ -34,7 +34,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
                 controller: TextEditingController(
                     text: FirebaseAuthentication.currentUser.displayName),
                 readOnly: true,
-                android: (_) => MaterialTextFieldData(
+                material: (_, __) => MaterialTextFieldData(
                   decoration: InputDecoration(
                     hintText: "FF Log Username",
                     border: OutlineInputBorder(),
@@ -46,9 +46,9 @@ class _UpdateUsernameState extends State<UpdateUsername> {
               padding: const EdgeInsets.all(16.0),
               child: PlatformTextField(
                 controller: displayNameController,
-                ios: (_) => CupertinoTextFieldData(
+                cupertino: (_, __) => CupertinoTextFieldData(
                     placeholder: "Updated FF Log Username"),
-                android: (_) => MaterialTextFieldData(
+                material: (_, __) => MaterialTextFieldData(
                   decoration: InputDecoration(
                     hintText: "FF Log Username",
                     border: OutlineInputBorder(),
