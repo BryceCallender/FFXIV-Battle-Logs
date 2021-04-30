@@ -149,6 +149,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (user == null) {
       return [
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
+        ),
         PlatformButton(
           child: Text("Login"),
           ios: (_) => CupertinoButtonData(
@@ -173,6 +176,9 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
+        ),
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
         ),
         PlatformButton(
           child: Text("Search"),
@@ -201,6 +207,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ];
     } else {
       return [
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
+        ),
         PlatformButton(
           child: Text(" Home "),
           ios: (_) => CupertinoButtonData(
@@ -226,6 +235,9 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
+        ),
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
         ),
         PlatformButton(
           child: Text("Search"),

@@ -51,13 +51,13 @@ class FFXIVPartySection extends StatelessWidget {
       Container(
         //padding: const EdgeInsets.only(top: 8.0),
         decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.blueAccent.withAlpha(200),
-                blurRadius: 10.0,
-                spreadRadius: 0.0,
-              ),
-            ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blueAccent.withAlpha(200),
+              blurRadius: 10.0,
+              spreadRadius: 0.0,
+            ),
+          ],
         ),
         child: Card(
           color: mediaQuery.platformBrightness == Brightness.dark
@@ -134,9 +134,9 @@ class FFXIVPartySection extends StatelessWidget {
                   width: icon_size, height: icon_size),
               trailing: isIOS
                   ? Icon(CupertinoIcons.forward,
-                      color: Styles.getColorFromBrightness(context))
+                  color: Styles.getColorFromBrightness(context))
                   : Icon(Icons.keyboard_arrow_right,
-                      color: Styles.getColorFromBrightness(context)),
+                  color: Styles.getColorFromBrightness(context)),
               onTap: () {
                 if (isIOS) {
                   Navigator.push(
@@ -274,7 +274,7 @@ class FFXIVPartySection extends StatelessWidget {
                 ? ThemeData.dark().cardColor
                 : ThemeData.light().cardColor,
             child: ListTile(
-              title: Text(ffxivParty.characters[2].name,
+              title: Text("Q Fever",
                   style: Styles.getTextStyleFromBrightness(context)),
               leading: Image.asset(ffxivParty.characters[2].playerClass.iconPath,
                   width: icon_size, height: icon_size),
@@ -290,7 +290,7 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[2].name,
+                            "Q Fever",
                             reportID,
                             ffxivParty.characters[2].playerClass.name,
                             start,
@@ -305,7 +305,7 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[2].name,
+                            "Q Fever",
                             reportID,
                             ffxivParty.characters[2].playerClass.name,
                             start,
@@ -337,15 +337,15 @@ class FFXIVPartySection extends StatelessWidget {
                 ? ThemeData.dark().cardColor
                 : ThemeData.light().cardColor,
             child: ListTile(
-              title: Text("Q Fever",
+              title: Text("Dengue Fever",
                   style: Styles.getTextStyleFromBrightness(context)),
               leading: Image.asset(ffxivParty.characters[3].playerClass.iconPath,
                   width: icon_size, height: icon_size),
               trailing: isIOS
                   ? Icon(CupertinoIcons.forward,
-                      color: Styles.getColorFromBrightness(context))
+                  color: Styles.getColorFromBrightness(context))
                   : Icon(Icons.keyboard_arrow_right,
-                      color: Styles.getColorFromBrightness(context)),
+                  color: Styles.getColorFromBrightness(context)),
               onTap: () {
                 if (isIOS) {
                   Navigator.push(
@@ -353,7 +353,7 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "Q Fever",
+                            "Dengue Fever",
                             reportID,
                             ffxivParty.characters[3].playerClass.name,
                             start,
@@ -368,7 +368,7 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "Q Fever",
+                            "Dengue Fever",
                             reportID,
                             ffxivParty.characters[3].playerClass.name,
                             start,
@@ -487,9 +487,9 @@ class FFXIVPartySection extends StatelessWidget {
                   width: icon_size, height: icon_size),
               trailing: isIOS
                   ? Icon(CupertinoIcons.forward,
-                      color: Styles.getColorFromBrightness(context))
+                  color: Styles.getColorFromBrightness(context))
                   : Icon(Icons.keyboard_arrow_right,
-                      color: Styles.getColorFromBrightness(context)),
+                  color: Styles.getColorFromBrightness(context)),
               onTap: () {
                 if (isIOS) {
                   Navigator.push(
@@ -544,7 +544,7 @@ class FFXIVPartySection extends StatelessWidget {
                 ? ThemeData.dark().cardColor
                 : ThemeData.light().cardColor,
             child: ListTile(
-              title: Text("Lassa Fever",
+              title: Text("Blue Fever",
                   style: Styles.getTextStyleFromBrightness(context)),
               leading: Image.asset(ffxivParty.characters[4].playerClass.iconPath,
                   width: icon_size, height: icon_size),
@@ -560,7 +560,7 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "Lassa Fever",
+                            "Blue Fever",
                             reportID,
                             ffxivParty.characters[4].playerClass.name,
                             start,
@@ -606,7 +606,7 @@ class FFXIVPartySection extends StatelessWidget {
                 ? ThemeData.dark().cardColor
                 : ThemeData.light().cardColor,
             child: ListTile(
-              title: Text("RiftValley Fever",
+              title: Text("Hemorrhagic Fever",
                   style: Styles.getTextStyleFromBrightness(context)),
               leading: Image.asset(ffxivParty.characters[5].playerClass.iconPath,
                   width: icon_size, height: icon_size),
@@ -622,7 +622,7 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "RiftValley Fever",
+                            "Hemorrhagic Fever",
                             reportID,
                             ffxivParty.characters[5].playerClass.name,
                             start,
@@ -668,7 +668,7 @@ class FFXIVPartySection extends StatelessWidget {
                 ? ThemeData.dark().cardColor
                 : ThemeData.light().cardColor,
             child: ListTile(
-              title: Text("Blue Fever",
+              title: Text("Lassa Fever",
                   style: Styles.getTextStyleFromBrightness(context)),
               leading: Image.asset(ffxivParty.characters[6].playerClass.iconPath,
                   width: icon_size, height: icon_size),
@@ -684,7 +684,7 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "Blue Fever",
+                            "Lassa Fever",
                             reportID,
                             ffxivParty.characters[6].playerClass.name,
                             start,
@@ -699,7 +699,7 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "Blue Fever",
+                            "Lassa Fever",
                             reportID,
                             ffxivParty.characters[6].playerClass.name,
                             start,
@@ -731,15 +731,15 @@ class FFXIVPartySection extends StatelessWidget {
                 ? ThemeData.dark().cardColor
                 : ThemeData.light().cardColor,
             child: ListTile(
-              title: Text("Hemorrhagic Fever",
+              title: Text("RiftValley Fever",
                   style: Styles.getTextStyleFromBrightness(context)),
               leading: Image.asset(ffxivParty.characters[7].playerClass.iconPath,
                   width: icon_size, height: icon_size),
               trailing: isIOS
                   ? Icon(CupertinoIcons.forward,
-                      color: Styles.getColorFromBrightness(context))
+                  color: Styles.getColorFromBrightness(context))
                   : Icon(Icons.keyboard_arrow_right,
-                      color: Styles.getColorFromBrightness(context)),
+                  color: Styles.getColorFromBrightness(context)),
               onTap: () {
                 if (isIOS) {
                   Navigator.push(
@@ -747,7 +747,7 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "Hemorrhagic Fever",
+                            "RiftValley Fever",
                             reportID,
                             ffxivParty.characters[7].playerClass.name,
                             start,
@@ -762,7 +762,7 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            "Hemorrhagic Fever",
+                            "RiftValley Fever",
                             reportID,
                             ffxivParty.characters[7].playerClass.name,
                             start,

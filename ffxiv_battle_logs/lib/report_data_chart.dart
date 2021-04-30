@@ -5,7 +5,6 @@ class ReportDataChart extends StatefulWidget {
   final List<charts.Series> seriesList;
   final bool animate;
   final bool vertical;
-
   ReportDataChart(this.seriesList, {this.animate, this.vertical});
 
   @override

@@ -44,7 +44,7 @@ class FFXIVPartySection extends StatelessWidget {
         constraints: BoxConstraints.expand(height: 100.0),
         decoration: BoxDecoration(color: Colors.transparent),
         child: Image.asset(
-          "assets/images/class_icons/tank.png",
+          "assets/images/class_icons/Tank_Icon_1.png",
           fit: BoxFit.contain,
         ),
       ),
@@ -80,12 +80,11 @@ class FFXIVPartySection extends StatelessWidget {
                   CupertinoPageRoute(
                     builder: (context) {
                       return EventPage(
-                          ffxivParty.characters[0].name,
+                          ffxivParty.characters[0],
                           reportID,
-                          ffxivParty.characters[0].playerClass.name,
                           start,
-                          end,
-                          ffxivParty.characters[0].sourceID);
+                          end
+                      );
                     },
                   ),
                 );
@@ -95,12 +94,11 @@ class FFXIVPartySection extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) {
                       return EventPage(
-                          ffxivParty.characters[0].name,
+                          ffxivParty.characters[0],
                           reportID,
-                          ffxivParty.characters[0].playerClass.name,
                           start,
-                          end,
-                          ffxivParty.characters[0].sourceID);
+                          end
+                      );
                     },
                   ),
                 );
@@ -144,12 +142,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[1].name,
+                            ffxivParty.characters[1],
                             reportID,
-                            ffxivParty.characters[1].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[1].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -159,12 +156,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[1].name,
+                            ffxivParty.characters[1],
                             reportID,
-                            ffxivParty.characters[1].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[1].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -188,7 +184,7 @@ class FFXIVPartySection extends StatelessWidget {
         constraints: BoxConstraints.expand(height: 100.0),
         decoration: BoxDecoration(color: Colors.transparent),
         child: Image.asset(
-          "assets/images/class_icons/healer.png",
+          "assets/images/class_icons/Healer_Icon_1.png",
           fit: BoxFit.contain,
         ),
       ),
@@ -227,12 +223,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[1].name,
+                            ffxivParty.characters[1],
                             reportID,
-                            ffxivParty.characters[1].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[1].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -242,12 +237,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[1].name,
+                            ffxivParty.characters[1],
                             reportID,
-                            ffxivParty.characters[1].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[1].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -290,12 +284,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[2].name,
+                            ffxivParty.characters[2],
                             reportID,
-                            ffxivParty.characters[2].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[2].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -305,12 +298,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[2].name,
+                            ffxivParty.characters[2],
                             reportID,
-                            ffxivParty.characters[2].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[2].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -353,12 +345,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[3].name,
+                            ffxivParty.characters[3],
                             reportID,
-                            ffxivParty.characters[3].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[3].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -368,12 +359,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[3].name,
+                            ffxivParty.characters[3],
                             reportID,
-                            ffxivParty.characters[3].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[3].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -396,7 +386,7 @@ class FFXIVPartySection extends StatelessWidget {
       constraints: BoxConstraints.expand(height: 100.0),
       decoration: BoxDecoration(color: Colors.transparent),
       child: Image.asset(
-        "assets/images/class_icons/dps.png",
+        "assets/images/class_icons/Dps_Icon_1.png",
         fit: BoxFit.contain,
       ),
     ));
@@ -434,12 +424,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[2].name,
+                            ffxivParty.characters[2],
                             reportID,
-                            ffxivParty.characters[2].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[2].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -449,12 +438,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[2].name,
+                            ffxivParty.characters[2],
                             reportID,
-                            ffxivParty.characters[2].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[2].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -497,12 +485,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[3].name,
+                            ffxivParty.characters[3],
                             reportID,
-                            ffxivParty.characters[3].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[3].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -512,12 +499,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[3].name,
+                            ffxivParty.characters[3],
                             reportID,
-                            ffxivParty.characters[3].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[3].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -560,12 +546,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[4].name,
+                            ffxivParty.characters[4],
                             reportID,
-                            ffxivParty.characters[4].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[4].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -575,12 +560,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[4].name,
+                            ffxivParty.characters[4],
                             reportID,
-                            ffxivParty.characters[4].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[4].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -622,12 +606,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[5].name,
+                            ffxivParty.characters[5],
                             reportID,
-                            ffxivParty.characters[5].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[5].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -637,12 +620,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[5].name,
+                            ffxivParty.characters[5],
                             reportID,
-                            ffxivParty.characters[5].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[5].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -684,12 +666,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[6].name,
+                            ffxivParty.characters[6],
                             reportID,
-                            ffxivParty.characters[6].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[6].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -699,12 +680,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[6].name,
+                            ffxivParty.characters[6],
                             reportID,
-                            ffxivParty.characters[6].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[6].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -747,12 +727,11 @@ class FFXIVPartySection extends StatelessWidget {
                     CupertinoPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[7].name,
+                            ffxivParty.characters[7],
                             reportID,
-                            ffxivParty.characters[7].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[7].sourceID);
+                            end
+                        );
                       },
                     ),
                   );
@@ -762,12 +741,11 @@ class FFXIVPartySection extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return EventPage(
-                            ffxivParty.characters[7].name,
+                            ffxivParty.characters[7],
                             reportID,
-                            ffxivParty.characters[7].playerClass.name,
                             start,
-                            end,
-                            ffxivParty.characters[7].sourceID);
+                            end
+                        );
                       },
                     ),
                   );

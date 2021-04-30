@@ -31,12 +31,22 @@ class _RegisterState extends State<Register> {
   final fflogUsernameController = TextEditingController();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text("Register an account"),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "register",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(
@@ -58,19 +68,9 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                   ),
-//                  TextFormField(
-//                    decoration: InputDecoration(
-//                      border: OutlineInputBorder(),
-//                      labelText: 'FF Logs Username',
-//                    ),
-//                    validator: (value) {
-//                      if (value.isEmpty) {
-//                        return "Please enter your FF Log username";
-//                      }
-//                      return null;
-//                    },
-//                    onSaved: (value) => _ffLogUsername = value,
-//                  ),
+                  PlatformWidget(
+                    ios: (_) => SizedBox(height: 8.0),
+                  ),
                   Row(
                     children: [
                       PlatformSwitch(
@@ -83,6 +83,9 @@ class _RegisterState extends State<Register> {
                       ),
                       Text("This is my FF Logs username")
                     ],
+                  ),
+                  PlatformWidget(
+                    ios: (_) => SizedBox(height: 8.0),
                   ),
                   PlatformTextField(
                     controller: emailController,
@@ -120,19 +123,11 @@ class _RegisterState extends State<Register> {
                           // If the form is valid, display a snackbar. In the real world,
                           // you'd often call a server or save the information in a database.
                           if (hasVerifiedFFLogUsername) {
-//                          Scaffold.of(context).showSnackBar(
-//                              SnackBar(content: Text('Processing Data')));
                             validateAndSubmit();
                           } else {
                             showSimpleNotification(
                                 Text("Please verify your FF Logs username"),
                                 background: Colors.red);
-//                          Scaffold.of(context).showSnackBar(
-//                            SnackBar(
-//                              content: Text(
-//                                  'Please verify your FF Log username and hit the checkbox'),
-//                            ),
-//                          );
                           }
                         }
                       },

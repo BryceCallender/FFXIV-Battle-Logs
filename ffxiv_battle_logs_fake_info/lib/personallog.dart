@@ -39,7 +39,7 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
     var mediaQuery = MediaQuery.of(context);
     return PlatformScaffold(
       appBar: PlatformAppBar(
-        title: Text("Personal Logs"),
+        title: Text(widget.userName + " Personal Logs"),
         backgroundColor: CupertinoColors.activeBlue,
         ios: (_) => CupertinoNavigationBarData(
           heroTag: "personalLog",

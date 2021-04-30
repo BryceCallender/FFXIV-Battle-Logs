@@ -16,8 +16,6 @@ class SearchResults extends StatelessWidget {
   final String serverRegion;
   final int zoneNumber;
 
-  FFLogZones zoneData = FFLogZones();
-
   SearchResults(this.characterName, this.serverName, this.serverRegion,
       {this.zoneNumber = 33});
 
@@ -86,8 +84,8 @@ class SearchResults extends StatelessWidget {
                               ),
                               child: Image.asset(
                                   snapshot.data[index].difficulty == 100
-                                      ? "assets/images/map_icons/060000/060834.png"
-                                      : "assets/images/map_icons/060000/060855.png",
+                                      ? "assets/images/map_icons/trial.png"
+                                      : "assets/images/map_icons/high_end_duty.png",
                                   fit: BoxFit.cover),
                             ),
                             title: Text(snapshot.data[index].encounterName,
@@ -100,8 +98,9 @@ class SearchResults extends StatelessWidget {
                             trailing: isIOS? Icon(CupertinoIcons.forward, color: Styles.getColorFromBrightness(context)) : Icon(Icons.keyboard_arrow_right, color: Styles.getColorFromBrightness(context)),
                             onTap: () {
                               Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
+                                  platformPageRoute(builder: (context) {
                                     FFLogParseReport reportData = snapshot.data[index];
+                                    print(reportData.encounterName);
                                     FFLogReport parseToReport = FFLogReport(id: reportData.reportID,
                                         title: reportData.encounterName,
                                         start: reportData.startTime,
@@ -110,7 +109,7 @@ class SearchResults extends StatelessWidget {
 
                                 return FFLogFightsPage(
                                     report: parseToReport);
-                              }));
+                              }, context: context));
                             },
                           ),
                         ],

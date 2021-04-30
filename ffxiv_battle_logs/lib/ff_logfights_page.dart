@@ -67,7 +67,7 @@ class FFLogFightsPage extends StatelessWidget {
                                             ? Colors.green
                                             : Colors.red)),
                             child: ListTile(
-                              dense: true, //maybe?
+                              dense: true,
                               leading: Image.asset(
                                   "assets/images/banners/112000/" +
                                       snapshot.data.ffLogFightData[index].name
@@ -179,6 +179,10 @@ class FFLogFightsPage extends StatelessWidget {
         "https://www.fflogs.com/v1/report/fights/" +
             report.id +
             "?api_key=a468c182a1d6b2464526fb12ce56044f");
+
+    print("https://www.fflogs.com/v1/report/fights/" +
+        report.id +
+        "?api_key=a468c182a1d6b2464526fb12ce56044f");
 
     var fightData = jsonDecode(response.body);
 

@@ -2,6 +2,7 @@ import 'package:ffxiv_battle_logs/searchresults.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:tuple/tuple.dart';
 
 import 'fflog_classes.dart';
@@ -32,129 +33,60 @@ class _SearchUserStats extends State<SearchUsers> {
 
   Tuple2<String, int> zoneID = Tuple2<String, int>("Eden's Verse", 33);
 
-  final List<String> worlds = [
-    "Adamantoise",
-    "Aegis",
-    "Alexander",
-    "Anima",
-    "Asura",
-    "Atomos",
-    "Bahamut",
-    "Balmung",
-    "Behemoth",
-    "Belias",
-    "Brynhildr",
-    "Cactuar",
-    "Carbuncle",
-    "Cerberus",
-    "Chocobo",
-    "Coeurl",
-    "Diabolos",
-    "Durandal",
-    "Excalibur",
-    "Exodus",
-    "Faerie",
-    "Famfrit",
-    "Fenrir",
-    "Garuda",
-    "Gilgamesh",
-    "Goblin",
-    "Gungnir",
-    "Hades",
-    "Hyperion",
-    "Ifrit",
-    "Ixion",
-    "Jenova",
-    "Kujata",
-    "Lamia",
-    "Leviathan",
-    "Lich",
-    "Louisoix",
-    "Malboro",
-    "Mandragora",
-    "Masamune",
-    "Mateus",
-    "Midgardsormr",
-    "Moogle",
-    "Odin",
-    "Omega",
-    "Pandaemonium",
-    "Phoenix",
-    "Ragnarok",
-    "Ramuh",
-    "Ridill",
-    "Sargatanas",
-    "Shinryu",
-    "Shiva",
-    "Siren",
-    "Tiamat",
-    "Titan",
-    "Tonberry",
-    "Typhon",
-    "Ultima",
-    "Ultros",
-    "Unicorn",
-    "Valefor",
-    "Yojimbo",
-    "Zalera",
-    "Zeromus",
-    "Zodiark",
-    "Spriggan",
-    "Twintania"
-  ];
-
-  final List<String> servers = ["NA", "EU", "JP"];
-  FFLogZones ffLogZones = FFLogZones();
-
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text("Search for Parses"),
         backgroundColor: CupertinoColors.activeBlue,
+        ios: (_) => CupertinoNavigationBarData(
+          heroTag: "searchUsers",
+          transitionBetweenRoutes: false,
+        ),
       ),
       body: Container(
-        child: ListView(children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: PlatformTextField(
-              controller: nameController,
-              ios: (_) => CupertinoTextFieldData(
-                  keyboardType: TextInputType.text,
-                  prefix: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(CupertinoIcons.search),
-                  ),
-                  placeholder: "Character name"),
-              android: (_) => MaterialTextFieldData(
-                  keyboardType: TextInputType.text,
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    hintText: "Character name",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  )),
-            ),
-          ),
-          ...platformPickers(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: PlatformButton(
-              child: Text("Submit"),
-              ios: (_) => CupertinoButtonData(
-                color: CupertinoColors.activeBlue,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => SearchResults(
-                          nameController.text, world, server,
-                          zoneNumber: zoneID.item2),
+        child: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: PlatformTextField(
+                controller: nameController,
+                ios: (_) => CupertinoTextFieldData(
+                    keyboardType: TextInputType.text,
+                    prefix: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(CupertinoIcons.search),
                     ),
-                  );
-                },
+                    placeholder: "Character name"),
+                android: (_) => MaterialTextFieldData(
+                    keyboardType: TextInputType.text,
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      hintText: "Character name",
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(),
+                    )),
               ),
-              android: (_) => MaterialRaisedButtonData(
+            ),
+            ...platformPickers(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: PlatformButton(
+                child: Text("Submit"),
+                ios: (_) => CupertinoButtonData(
+                  color: CupertinoColors.activeBlue,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => SearchResults(
+                            nameController.text, world, server,
+                            zoneNumber: zoneID.item2),
+                      ),
+                    );
+                  },
+                ),
+                android: (_) => MaterialRaisedButtonData(
                   color: Colors.blue,
                   splashColor: Colors.lightBlue,
                   onPressed: () {
@@ -165,10 +97,12 @@ class _SearchUserStats extends State<SearchUsers> {
                               nameController.text, world, server,
                               zoneNumber: zoneID.item2)),
                     );
-                  }),
+                  },
+                ),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }
@@ -193,12 +127,13 @@ class _SearchUserStats extends State<SearchUsers> {
                       backgroundColor: CupertinoColors.activeBlue,
                       scrollController: worldScrollController,
                       onSelectedItemChanged: (int value) {
-                        world = worlds[value];
+                        world = GameData.worlds[value];
                         worldController.text = world;
-                        worldScrollController = FixedExtentScrollController(initialItem: value);
+                        worldScrollController =
+                            FixedExtentScrollController(initialItem: value);
                         print(world);
                       },
-                      children: worlds.map((world) {
+                      children: GameData.worlds.map((world) {
                         return Text(world);
                       }).toList(),
                     ),
@@ -225,13 +160,14 @@ class _SearchUserStats extends State<SearchUsers> {
                         scrollController: serverScrollController,
                         backgroundColor: CupertinoColors.activeBlue,
                         onSelectedItemChanged: (int value) {
-                          server = servers[value];
+                          server = GameData.regions[value];
                           serverController.text = server;
-                          serverScrollController = FixedExtentScrollController(initialItem: value);
+                          serverScrollController =
+                              FixedExtentScrollController(initialItem: value);
                           print(server);
                         },
-                        children: servers.map((server) {
-                          return Text(server);
+                        children: GameData.regions.map((region) {
+                          return Text(region);
                         }).toList(),
                       ),
                     );
@@ -239,51 +175,42 @@ class _SearchUserStats extends State<SearchUsers> {
             },
           ),
         ),
-        FutureBuilder(
-          future: ffLogZones.getZoneNamesAsync(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CupertinoTextField(
-                  readOnly: true,
-                  controller: zoneController,
-                  placeholder: "Zone",
-                  onTap: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return SizedBox(
-                          height: 200,
-                          child: CupertinoPicker(
-                            itemExtent: 30.0,
-                            scrollController: zoneScrollController,
-                            backgroundColor: CupertinoColors.activeBlue,
-                            onSelectedItemChanged: (int value) {
-                              Tuple2<String, int> data =
-                                  snapshot.data[value] as Tuple2<String, int>;
-                              zoneID = data;
-                              zoneController.text = data.item1;
-                              zoneScrollController = FixedExtentScrollController(initialItem: value);
-                              print(zoneID);
-                            },
-                            children: snapshot.data.map<Text>((tuple) {
-                              return Text(tuple.item1);
-                            }).toList(),
-                          ),
-                        );
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CupertinoTextField(
+            readOnly: true,
+            controller: zoneController,
+            placeholder: "Zone",
+            onTap: () {
+              showCupertinoModalPopup(
+                context: context,
+                builder: (BuildContext context) {
+                  return SizedBox(
+                    height: 200,
+                    child: CupertinoPicker(
+                      itemExtent: 30.0,
+                      scrollController: zoneScrollController,
+                      backgroundColor: CupertinoColors.activeBlue,
+                      onSelectedItemChanged: (int value) {
+                        FFLogZone zoneData = GameData.zones.zones[value];
+                        Tuple2<String, int> data =
+                            Tuple2<String, int>(zoneData.zoneName, zoneData.id);
+                        zoneID = data;
+                        zoneController.text = data.item1;
+                        zoneScrollController =
+                            FixedExtentScrollController(initialItem: value);
+                        print(zoneID);
                       },
-                    );
-                  },
-                ),
+                      children:
+                          GameData.zones.getZonesAsTuple().map<Text>((tuple) {
+                        return Text(tuple.item1);
+                      }).toList(),
+                    ),
+                  );
+                },
               );
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return CupertinoActivityIndicator();
-            } else {
-              return Container();
-            }
-          },
+            },
+          ),
         ),
       ];
     } else {
@@ -293,7 +220,8 @@ class _SearchUserStats extends State<SearchUsers> {
           child: DropdownButton(
             value: world,
             isExpanded: true,
-            items: worlds.map<DropdownMenuItem<String>>((String value) {
+            items:
+                GameData.worlds.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -311,7 +239,8 @@ class _SearchUserStats extends State<SearchUsers> {
           child: DropdownButton(
             value: server,
             isExpanded: true,
-            items: servers.map<DropdownMenuItem<String>>((String value) {
+            items:
+                GameData.regions.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -324,37 +253,24 @@ class _SearchUserStats extends State<SearchUsers> {
             },
           ),
         ),
-        FutureBuilder(
-          future: ffLogZones.getZoneNamesAsync(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: DropdownButton(
-                  value: zoneID,
-                  isExpanded: true,
-                  items: snapshot.data
-                      .map<DropdownMenuItem<Tuple2<String, int>>>(
-                          (Tuple2<String, int> value) {
-                    return DropdownMenuItem<Tuple2<String, int>>(
-                      value: value,
-                      child: Text(value.item1),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      zoneID = value;
-                    });
-                  },
-                ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: DropdownButton(
+            value: zoneID,
+            isExpanded: true,
+            items: GameData.zones.getZonesAsTuple().map<DropdownMenuItem<Tuple2<String, int>>>(
+                (Tuple2<String, int> value) {
+              return DropdownMenuItem<Tuple2<String, int>>(
+                value: value,
+                child: Text(value.item1),
               );
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else {
-              return Container();
-            }
-          },
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                zoneID = value;
+              });
+            },
+          ),
         ),
       ];
     }

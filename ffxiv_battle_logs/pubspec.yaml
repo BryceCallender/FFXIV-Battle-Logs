@@ -41,11 +41,17 @@ dependencies:
   tuple: ^1.0.3
   percent_indicator: ^2.1.1+1
 
-  shared_preferences: ^0.5.6+2
+  shared_preferences: ^0.5.10
   provider: ^4.0.4
   flutter_platform_widgets: ^0.32.4
   email_validator: ^1.0.0
   overlay_support: ^1.0.3
+
+  graphql_flutter: ^3.1.0
+  oauth2: ^1.6.1
+
+  uni_links: ^0.4.0
+  url_launcher: ^5.6.0
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +78,7 @@ flutter:
     - assets/images/banners/112000/
     - assets/images/banners/113000/
     - assets/images/map_icons/060000/
+    - assets/images/map_icons/
     - assets/images/class_action_icons/000000/
     - assets/images/class_action_icons/001000/
     - assets/images/class_action_icons/002000/
@@ -89,6 +96,7 @@ flutter:
     - assets/images/class_action_icons/020000/
     - assets/images/class_icons/
     - assets/images/
+    - assets/credentials.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

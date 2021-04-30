@@ -1,3 +1,4 @@
+import 'package:ffxiv_battle_logs/ffxiv_classes.dart';
 import 'package:ffxiv_battle_logs/finaleventsystem.dart';
 import 'package:ffxiv_battle_logs/realtimeevent.dart';
 import 'package:flutter/material.dart';
@@ -16,15 +17,13 @@ class DPSEvent {
 }
 
 class EventPage extends StatefulWidget {
-  final String playerName;
+  final FFXIVCharacter player;
   final String reportID;
-  final String className;
   final int start;
   final int end;
-  final int sourceID;
 
   EventPage(
-      this.playerName, this.reportID, this.className, this.start, this.end, this.sourceID);
+      this.player, this.reportID, this.start, this.end);
 
   @override
   _EventPageState createState() => _EventPageState();
@@ -42,7 +41,7 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       appBar: PlatformAppBar(
-        title: _currentIndex == 0? Text("${widget.playerName}'s events"): Text("${widget.playerName}'s real time events"),
+        title: _currentIndex == 0? Text("${widget.player.name}'s events"): Text("${widget.player.name}'s real time events"),
         backgroundColor: CupertinoColors.activeBlue,
         ios: (_) => CupertinoNavigationBarData(
           heroTag: "event",
@@ -50,19 +49,19 @@ class _EventPageState extends State<EventPage> {
         ),
       ),
       body: _currentIndex == 0?
-      FinalEventSystem(playerName: widget.playerName,
+      FinalEventSystem(playerName: widget.player.name,
         reportID: widget.reportID,
-        className: widget.className,
+        className: widget.player.playerClass.name,
         start: widget.start,
         end: widget.end,
-        sourceID: widget.sourceID,
+        sourceID: widget.player.sourceID,
       ):
-      RealTimeEventSystem(playerName: widget.playerName,
+      RealTimeEventSystem(playerName: widget.player.name,
         reportID: widget.reportID,
-        className: widget.className,
+        className: widget.player.playerClass.name,
         start: widget.start,
         end: widget.end,
-        sourceID: widget.sourceID,
+        sourceID: widget.player.sourceID,
       ),
       bottomNavBar: PlatformNavBar(
         currentIndex: _currentIndex,

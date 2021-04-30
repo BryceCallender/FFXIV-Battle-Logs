@@ -163,7 +163,7 @@ class _SpecificFightReportState extends State<SpecificFightReport> {
       List<DPSInfo> sortedByPartyWidgetDPSInfo = [];
       List<charts.Series<DPSInfo, String>> chartData = [];
 
-      List<String> dummyNames = ["Typhus Fever", "Yellow Fever", "Dengue Fever", "Q Fever", "Lassa Fever", "RiftValley Fever",  "Blue Fever", "Hemorrhagic Fever"];
+      List<String> dummyNames = ["Typhus Fever", "Yellow Fever", "Q Fever", "Dengue Fever", "Blue Fever", "Hemorrhagic Fever",  "Lassa Fever", "RiftValley Fever"];
 
       entryList.forEach((player) {
         if (player["name"] != "Limit Break" &&

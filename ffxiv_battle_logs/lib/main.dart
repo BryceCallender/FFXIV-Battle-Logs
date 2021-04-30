@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:ffxiv_battle_logs/FadingTextWidget.dart';
+import 'package:ffxiv_battle_logs/fflog_classes.dart';
 import 'package:ffxiv_battle_logs/home_page.dart';
 import 'package:ffxiv_battle_logs/login.dart';
 import 'package:ffxiv_battle_logs/searchusers.dart';
@@ -10,6 +14,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'authentication.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:ffxiv_battle_logs/oauth2data.dart';
 
 bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
 
@@ -21,6 +28,24 @@ void main() async {
   runApp(new MyApp());
 }
 
+/// Either load an OAuth2 client from saved credentials or authenticate a new
+/// one.
+Future<oauth2.Client> getClientCredentialsGrant() async {
+  // Calling the top-level `clientCredentialsGrant` function will return a
+  // [Client] instead.
+  var client =
+      await oauth2.clientCredentialsGrant(OAuth2Data.tokenEndpoint, OAuth2Data.identifier, OAuth2Data.secret);
+
+  // You can save the client's credentials, which consists of an access token, and
+  // potentially a refresh token and expiry date, to a file. This way, subsequent runs
+  // do not need to reauthenticate, and you can avoid saving the client identifier and
+  // secret.
+
+  //await credentialsFile.writeAsString(client.credentials.toJson());
+
+  return client;
+}
+
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
@@ -28,11 +53,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  ValueNotifier<GraphQLClient> client;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    final HttpLink httpLink =
+        HttpLink(uri: OAuth2Data.clientURI.toString());
+
+    final AuthLink authLink = AuthLink(
+      getToken: () async =>
+          'Bearer ${(await getClientCredentialsGrant()).credentials.accessToken}',
+    );
+
+    final Link link = authLink.concat(httpLink);
+
+    client = ValueNotifier(
+      GraphQLClient(
+        cache: InMemoryCache(),
+        link: link
+      ),
+    );
+
   }
 
   @override
@@ -52,24 +97,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport(
-      child: PlatformApp(
-        home: MyHomePage(title: "FFXIV Battle Logs"),
-        debugShowCheckedModeBanner: false,
-        ios: (_) => CupertinoAppData(
-          theme: CupertinoThemeData(
-              primaryColor: CupertinoColors.activeBlue,
-              textTheme: CupertinoTextThemeData(
-                  primaryColor:
-                      WidgetsBinding.instance.window.platformBrightness ==
-                              Brightness.dark
-                          ? Colors.white
-                          : Colors.black),
-              brightness: WidgetsBinding.instance.window.platformBrightness),
-        ),
-        android: (_) => MaterialAppData(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+    return GraphQLProvider(
+      client: client,
+      child: OverlaySupport(
+        child: PlatformApp(
+          home: MyHomePage(title: "FFXIV Battle Logs"),
+          debugShowCheckedModeBanner: false,
+          ios: (_) => CupertinoAppData(
+            theme: CupertinoThemeData(
+                primaryColor: CupertinoColors.activeBlue,
+                textTheme: CupertinoTextThemeData(
+                    primaryColor:
+                        WidgetsBinding.instance.window.platformBrightness ==
+                                Brightness.dark
+                            ? Colors.white
+                            : Colors.black),
+                brightness: WidgetsBinding.instance.window.platformBrightness),
+          ),
+          android: (_) => MaterialAppData(
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+          ),
         ),
       ),
     );
@@ -135,7 +183,58 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
-                )
+                ),
+                Query(
+                  options: QueryOptions(
+                    documentNode:
+                        gql("""
+                            {
+                              worldData {
+                                regions {
+                                  id
+                                  name
+                                  compactName
+                                }
+                                zones {
+                                  id
+                                  name
+                                  frozen
+                                  expansion {
+                                    name
+                                  }
+                                  encounters {
+                                    id
+                                    name
+                                  }
+                                }
+                              }
+                            }
+                            """
+                        ),
+                  ),
+                  // Just like in apollo refetch() could be used to manually trigger a refetch
+                  // while fetchMore() can be used for pagination purpose
+                  builder: (QueryResult result,
+                      {VoidCallback refetch, FetchMore fetchMore}) {
+                    if (result.hasException) {
+                      return Text('');
+                    }
+
+                    if (result.loading) {
+                      return Text('');
+                    }
+
+                    // it can be either Map or List
+                    List<dynamic> regions = result.data["worldData"]["regions"];
+
+                    GameData.zones = new FFLogZones(jsonEncode(result.data["worldData"]["zones"]));
+                    GameData.regions = regions.map((region) {return region["compactName"] as String;}).toList();
+
+                    print("Queried for data");
+
+                    return Text('');
+                  },
+                ),
               ],
             ),
           ),
@@ -149,6 +248,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (user == null) {
       return [
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
+        ),
         PlatformButton(
           child: Text("Login"),
           ios: (_) => CupertinoButtonData(
@@ -173,6 +275,9 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
+        ),
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
         ),
         PlatformButton(
           child: Text("Search"),
@@ -201,6 +306,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ];
     } else {
       return [
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
+        ),
         PlatformButton(
           child: Text(" Home "),
           ios: (_) => CupertinoButtonData(
@@ -226,6 +334,9 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
+        ),
+        PlatformWidget(
+          ios: (_) => SizedBox(height: 16.0),
         ),
         PlatformButton(
           child: Text("Search"),
