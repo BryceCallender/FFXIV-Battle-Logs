@@ -211,7 +211,7 @@ class _FinalTimeEventSystemState extends State<FinalEventSystem> {
               currentDPSData.DPS = totalDamage ~/ second;
             }
 
-            print(event.ability.name);
+            //print(event.ability.name);
 
             skillDamageMap.update(
               event.ability,
@@ -225,12 +225,12 @@ class _FinalTimeEventSystemState extends State<FinalEventSystem> {
                 return oldAbilityDamageInformation;
               },
               ifAbsent: () {
-                print(event.ability.name + " added to the map");
+                //print(event.ability.name + " added to the map");
                 return AbilityDamageInformation(event.amount, 0, 0);
               },
             );
 
-            print(skillDamageMap.length);
+            //print(skillDamageMap.length);
 
             textTimeEvents.add(Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -269,7 +269,7 @@ class _FinalTimeEventSystemState extends State<FinalEventSystem> {
       new Duration(milliseconds: (widget.end - widget.start));
       currentDPSTime = duration.toString().split('.').first.padLeft(8, "0");
 
-      print(skillDamageMap.length);
+      //print(skillDamageMap.length);
 
       skillDamageMap.forEach((ability, damageInformation) {
         damageInformation.dps =
@@ -277,7 +277,7 @@ class _FinalTimeEventSystemState extends State<FinalEventSystem> {
 
         damageInformation.percentage = (damageInformation.totalDamage / totalDamage) * 100;
 
-        print("${ability.name} did ${damageInformation.totalDamage} damage, ${damageInformation.dps} dps, for ${damageInformation.percentage}% of total damage");
+        //print("${ability.name} did ${damageInformation.totalDamage} damage, ${damageInformation.dps} dps, for ${damageInformation.percentage}% of total damage");
       });
     });
   }

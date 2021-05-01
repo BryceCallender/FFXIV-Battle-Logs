@@ -41,7 +41,9 @@ class SlidingAbilityState extends State<SlidingAbilities>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.stop();
+    _controller?.dispose();
+    _controller = null;
     super.dispose();
   }
 

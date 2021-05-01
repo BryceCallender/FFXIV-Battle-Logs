@@ -81,47 +81,52 @@ class _MyPersonalLogPage extends State<PersonalLogPage> {
                       color: mediaQuery.platformBrightness == Brightness.dark? ThemeData.dark().cardColor: ThemeData.light().cardColor,
                       child: Column(
                         children: <Widget>[
-                          ListTile(
-                            leading: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minWidth: 44,
-                                minHeight: 44,
-                                maxWidth: 64,
-                                maxHeight: 64,
-                              ),
-                              child: Image.asset(
-                                  widget.zoneData.isZoneExtreme(
-                                          snapshot.data[index].zone)
-                                      ? "assets/images/map_icons/trial.png"
-                                      : "assets/images/map_icons/high_end_duty.png",
-                                  fit: BoxFit.cover),
-                            ),
-                            title: Text(widget.zoneData
-                                .zoneIDToName(snapshot.data[index].zone),
-                            style: Styles.getTextStyleFromBrightness(context)),
-                            subtitle: Text("Date Logged: " +
-                                DateFormat.yMMMMd().add_jm().format(
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        snapshot.data[index].start)),
+                          Container(
+                            height: 70,
+                            child: Center(
+                              child: ListTile(
+                                leading: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minWidth: 44,
+                                    minHeight: 44,
+                                    maxWidth: 64,
+                                    maxHeight: 64,
+                                  ),
+                                  child: Image.asset(
+                                      widget.zoneData.isZoneExtreme(
+                                              snapshot.data[index].zone)
+                                          ? "assets/images/map_icons/trial.png"
+                                          : "assets/images/map_icons/high_end_duty.png",
+                                      fit: BoxFit.cover),
+                                ),
+                                title: Text(widget.zoneData
+                                    .zoneIDToName(snapshot.data[index].zone),
                                 style: Styles.getTextStyleFromBrightness(context)),
-                            trailing: isIOS? Icon(CupertinoIcons.forward, color: Styles.getColorFromBrightness(context)) : Icon(Icons.keyboard_arrow_right, color: Styles.getColorFromBrightness(context)),
-                            onTap: () {
-                              if(isIOS) {
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                        builder: (context) =>
-                                            FFLogFightsPage(
-                                                report: snapshot.data[index])));
-                              } else {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            FFLogFightsPage(
-                                                report: snapshot.data[index])));
-                              }
-                            },
+                                subtitle: Text("Logged: " +
+                                    DateFormat.yMMMMd().add_jm().format(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            snapshot.data[index].start)),
+                                    style: Styles.getTextStyleFromBrightness(context)),
+                                trailing: isIOS? Icon(CupertinoIcons.forward, color: Styles.getColorFromBrightness(context)) : Icon(Icons.keyboard_arrow_right, color: Styles.getColorFromBrightness(context)),
+                                onTap: () {
+                                  if(isIOS) {
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) =>
+                                                FFLogFightsPage(
+                                                    report: snapshot.data[index])));
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FFLogFightsPage(
+                                                    report: snapshot.data[index])));
+                                  }
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),

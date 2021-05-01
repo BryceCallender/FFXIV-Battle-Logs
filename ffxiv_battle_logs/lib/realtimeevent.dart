@@ -190,7 +190,7 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
       });
 
       calculateDPSFromEvents(eventData);
-      //showSkillsFromEvents(eventData);
+      showSkillsFromEvents(eventData);
 
       return eventData;
     });
@@ -241,7 +241,7 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
                 return oldAbilityDamageInformation;
               },
               ifAbsent: () {
-                print(event.ability.name + " added to the map");
+                //print(event.ability.name + " added to the map");
                 return AbilityDamageInformation(
                     event.amount,
                     event.amount / (second == 0 ? 1 : second),
@@ -249,7 +249,6 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
               },
             );
 
-//            setState(() {
             if (second != 0) {
               currentDPSData.DPS = totalDamage ~/ second;
             }
@@ -269,18 +268,23 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
                 Text(" hit for ${event.amount}")
               ],
             ));
-//            });
           }
           eventIndex++;
         } else {
           //Update the build since its a new second so lets just update the time
           if (currentMillis % 1000 == 0) {
-            setState(() {
-              Duration duration =
-              new Duration(milliseconds: (currentMillis - widget.start));
-              currentDPSTime =
-                  duration.toString().split('.').first.padLeft(8, "0");
-            });
+            if (this.mounted) {
+              setState(() {
+                Duration duration =
+                new Duration(milliseconds: (currentMillis - widget.start));
+                currentDPSTime =
+                    duration
+                        .toString()
+                        .split('.')
+                        .first
+                        .padLeft(8, "0");
+              });
+            }
           }
           //It was not equal therefore we can go to the next millisecond
           await Future.delayed(Duration(milliseconds: 1));
@@ -289,7 +293,6 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
       }
     }
 
-//    setState(() {
     //Find out the totalDamage at the end of everything even after dying
     currentDPSData.DPS = totalDamage ~/ ((widget.end - widget.start) / 1000);
     //print("Final DPS: ${currentDPSData.DPS}");
@@ -301,7 +304,6 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
       damageInformation.percentage =
           (damageInformation.totalDamage / totalDamage) * 100;
     });
-//    });
   }
 
   void showSkillsFromEvents(List<FFLogEvent> eventData) async {
@@ -317,8 +319,10 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
     while (currentMillis < widget.end && eventIndex < eventData.length) {
       //If we have data
       if (eventData.isNotEmpty) {
+
         //grab and store the data
         FFLogEvent event = eventData[eventIndex];
+
         //If we hit the event we want to display it
         if (currentMillis == event.timestamp) {
           Duration duration =
@@ -333,20 +337,20 @@ class _RealTimeEventSystemState extends State<RealTimeEventSystem> {
                   "assets/images/class_action_icons/${event.ability.abilityIcon}")
             ],
           ));
+
           //If something before it matches the time close by (weaving or auto on same time event)
           if ((currentMillis - previousEventMillis).abs() < 100) {
             heightSlide += 1.0;
           } else {
             heightSlide = 0.0;
           }
-          //print("Casted: ${event.ability.name}");
-//          setState(() {
+
           usedAbilities.add(SlidingAbilities(
             abilityPath:
             "assets/images/class_action_icons/${event.ability.abilityIcon}",
             heightSlide: heightSlide,
           ));
-//          });
+
           previousEventMillis = currentMillis;
           eventIndex++;
         } else {
