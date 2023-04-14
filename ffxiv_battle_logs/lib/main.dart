@@ -1,257 +1,252 @@
-import 'package:ffxiv_battle_logs/FadingTextWidget.dart';
-import 'package:ffxiv_battle_logs/home_page.dart';
-import 'package:ffxiv_battle_logs/login.dart';
-import 'package:ffxiv_battle_logs/searchusers.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:overlay_support/overlay_support.dart';
-import 'authentication.dart';
-import 'package:flutter/foundation.dart' as foundation;
+import 'dart:async';
+import 'dart:io';
 
-bool get isIOS => foundation.defaultTargetPlatform == TargetPlatform.iOS;
+import 'package:ffxiv_battle_logs/components/reports/report_overview.dart';
+import 'package:ffxiv_battle_logs/graphql/graphql_queries.dart';
+import 'package:ffxiv_battle_logs/models/reports.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:flutter/material.dart';
+import 'package:ffxiv_battle_logs/constants.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uni_links/uni_links.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+StreamSubscription? subscription;
+
+Future<Uri?> listen(Uri redirectUrl) async {
+  Uri? responseUrl;
+
+  // Attach a listener to the stream
+  final completer = Completer<Uri?>();
+
+  subscription = uriLinkStream.listen((Uri? uri) async {
+    // Use the uri and warn the user, if it is not correct
+    if (uri.toString().startsWith(redirectUrl.toString())) {
+      responseUrl = uri;
+      completer.complete(responseUrl);
+    }
+  }, onError: (err) {
+    // Handle exception by warning the user their action did not succeed
+    print(err);
+  });
+
+  return completer.future;
+}
+
+Future<oauth2.Client> createClient() async {
+  final path = await _localPath;
+  final credentialsFile = File('$path/credentials.json');
+  var exists = await credentialsFile.exists();
+
+  // If the OAuth2 credentials have already been saved from a previous run, we
+  // just want to reload them.
+  if (exists) {
+    var credentials =
+        oauth2.Credentials.fromJson(await credentialsFile.readAsString());
+    return oauth2.Client(credentials,
+        identifier: Constants.identifier, secret: Constants.secret);
+  }
+
+  // If we don't have OAuth2 credentials yet, we need to get the resource owner
+  // to authorize us. We're assuming here that we're a command-line application.
+  var grant = oauth2.AuthorizationCodeGrant(Constants.identifier,
+      Constants.authorizationEndpoint, Constants.tokenEndpoint,
+      secret: Constants.secret);
+
+  // A URL on the authorization server (authorizationEndpoint with some additional
+  // query parameters). Scopes and state can optionally be passed into this method.
+  var authorizationUrl = grant.getAuthorizationUrl(Constants.redirectUrl);
+
+  if (await canLaunchUrl(authorizationUrl)) {
+    await launchUrl(authorizationUrl, mode: LaunchMode.externalApplication);
+  }
+
+  var responseUrl = await listen(Constants.redirectUrl);
+
+  // Once the user is redirected to `redirectUrl`, pass the query parameters to
+  // the AuthorizationCodeGrant. It will validate them and extract the
+  // authorization code to create a new Client.
+  return await grant.handleAuthorizationResponse(responseUrl!.queryParameters);
+}
+
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+
+  return directory.path;
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  var client = await createClient();
+  subscription?.cancel();
 
-  runApp(new MyApp());
+  final path = await _localPath;
+  final credentialsFile = File('$path/credentials.json');
+
+  // Once we're done with the client, save the credentials file. This ensures
+  // that if the credentials were automatically refreshed while using the
+  // client, the new credentials are available for the next run of the
+  // program.
+  await credentialsFile.writeAsString(client.credentials.toJson());
+  Animate.restartOnHotReload = true;
+  runApp(MyApp(credentials: client.credentials));
 }
 
 class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
+  const MyApp({super.key, required this.credentials});
+
+  final oauth2.Credentials credentials;
+
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp> {
+  ValueNotifier<GraphQLClient>? client;
+
+  // This widget is the root of your application.
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
+    final HttpLink httpLink = HttpLink(Constants.userURI.toString());
 
-  @override
-  void didChangePlatformBrightness() {
-    print(WidgetsBinding.instance.window
-        .platformBrightness); // should print Brightness.light / Brightness.dark when you switch
-    super.didChangePlatformBrightness(); // make sure you call this
-    setState(
-        () {}); //Once tabbed back into the app this will rebuild with new brightness :)
+    final AuthLink authLink = AuthLink(
+      getToken: () async => 'Bearer ${widget.credentials.accessToken}',
+    );
+
+    final Link link = authLink.concat(httpLink);
+
+    client = ValueNotifier(
+      GraphQLClient(
+        cache: GraphQLCache(),
+        link: link,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport(
-      child: PlatformApp(
-        home: MyHomePage(title: "FFXIV Battle Logs"),
+    return GraphQLProvider(
+      client: client,
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        ios: (_) => CupertinoAppData(
-          theme: CupertinoThemeData(
-              primaryColor: CupertinoColors.activeBlue,
-              textTheme: CupertinoTextThemeData(
-                  primaryColor:
-                      WidgetsBinding.instance.window.platformBrightness ==
-                              Brightness.dark
-                          ? Colors.white
-                          : Colors.black),
-              brightness: WidgetsBinding.instance.window.platformBrightness),
+        title: 'Flutter Demo',
+        theme: ThemeData.dark(
+          useMaterial3: true,
         ),
-        android: (_) => MaterialAppData(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final FirebaseAuthentication _auth = new FirebaseAuthentication();
+  ScrollController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
+    return Scaffold(
+      appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: CupertinoColors.activeBlue,
-        ios: (_) => CupertinoNavigationBarData(
-          heroTag: "main",
-          transitionBetweenRoutes: false,
-        ),
       ),
-      body: SafeArea(
-        child: Container(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Image.asset("assets/images/AppIconWithoutLog.png"),
-                FadingTextWidget(),
-                FutureBuilder(
-                  future: showLoginOrHomePageButton(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return Column(children: snapshot.data);
-                    }
-                    return Container();
-                  },
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Query(
+                options: QueryOptions(
+                  document: gql(GraphQLQueries.reports),
+                  variables: {'page': 1, 'userID': 0},
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: SafeArea(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text(
-                              "FINAL FANTASY XIV © 2010 - 2020 SQUARE ENIX CO., LTD. All Rights Reserved.",
-                              textAlign: TextAlign.center,
-                            )
-                          ],
-                        ),
-                      ),
+                builder: (QueryResult result,
+                    {VoidCallback? refetch, FetchMore? fetchMore}) {
+                  if (result.hasException) {
+                    return Text(result.exception.toString());
+                  }
+
+                  if (result.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  Reports reportData = Reports.fromJson(
+                      result.data?['reportData']?['reports'] ?? {});
+
+                  if (reportData.reports.isEmpty) {
+                    return const Text('No repositories');
+                  }
+
+                  final int nextPage = reportData.currentPage + 1;
+
+                  FetchMoreOptions opts = FetchMoreOptions(
+                    variables: {'page': nextPage},
+                    updateQuery: (previousResultData, fetchMoreResultData) {
+                      final List<dynamic> reports = [
+                        ...previousResultData?['reportData']['reports']['data']
+                            as List<dynamic>,
+                        ...fetchMoreResultData?['reportData']['reports']['data']
+                            as List<dynamic>
+                      ];
+
+                      fetchMoreResultData?['reportData']['reports']['data'] =
+                          reports;
+
+                      return fetchMoreResultData;
+                    },
+                  );
+
+                  return NotificationListener(
+                    child: ListView.builder(
+                      key: PageStorageKey<String>('reports'),
+                      controller: _controller,
+                      shrinkWrap: true,
+                      itemCount: reportData.reports.length,
+                      itemBuilder: (context, index) {
+                        return ReportOverview(
+                          data: reportData.reports[index],
+                        );
+                      },
                     ),
-                  ),
-                )
-              ],
+                    onNotification: (t) {
+                      if (t is ScrollEndNotification &&
+                          t.metrics.atEdge &&
+                          reportData.hasMorePages) {
+                        fetchMore!(opts);
+                      }
+                      return true;
+                    },
+                  );
+                },
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
-  }
-
-  Future<List<Widget>> showLoginOrHomePageButton() async {
-    FirebaseUser user = await _auth.getCurrentUser();
-
-    if (user == null) {
-      return [
-        PlatformButton(
-          child: Text("Login"),
-          ios: (_) => CupertinoButtonData(
-            color: CupertinoColors.activeBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => Login(title: "Login Page"),
-                ),
-              );
-            },
-          ),
-          android: (_) => MaterialRaisedButtonData(
-            color: Colors.blue,
-            splashColor: Colors.lightBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Login(title: "Login Page")),
-              );
-            },
-          ),
-        ),
-        PlatformButton(
-          child: Text("Search"),
-          ios: (_) => CupertinoButtonData(
-            color: CupertinoColors.activeBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => SearchUsers(),
-                ),
-              );
-            },
-          ),
-          android: (_) => MaterialRaisedButtonData(
-            color: Colors.blue,
-            splashColor: Colors.lightBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SearchUsers()),
-              );
-            },
-          ),
-        ),
-      ];
-    } else {
-      return [
-        PlatformButton(
-          child: Text(" Home "),
-          ios: (_) => CupertinoButtonData(
-            color: CupertinoColors.activeBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => HomePage(userName: user.displayName),
-                ),
-              );
-            },
-          ),
-          android: (_) => MaterialRaisedButtonData(
-            color: Colors.blue,
-            splashColor: Colors.lightBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePage(userName: user.displayName),
-                ),
-              );
-            },
-          ),
-        ),
-        PlatformButton(
-          child: Text("Search"),
-          ios: (_) => CupertinoButtonData(
-            color: CupertinoColors.activeBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => SearchUsers(),
-                ),
-              );
-            },
-          ),
-          android: (_) => MaterialRaisedButtonData(
-            color: Colors.blue,
-            splashColor: Colors.lightBlue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SearchUsers()),
-              );
-            },
-          ),
-        ),
-      ];
-    }
   }
 }
