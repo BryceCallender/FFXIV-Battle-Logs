@@ -1,8 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ffxiv_battle_logs/helpers/color_helper.dart';
+import 'package:ffxiv_battle_logs/helpers/map_helper.dart';
 import 'package:ffxiv_battle_logs/models/fight.dart';
+import 'package:ffxiv_battle_logs/providers/reports_model.dart';
 import 'package:ffxiv_battle_logs/screens/breakdown_screen.dart';
+import 'package:ffxiv_battle_logs/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:ffxiv_battle_logs/extensions/duration_extensions.dart';
 
 class ReportPreview extends StatelessWidget {
   final String code;
@@ -27,18 +33,32 @@ class ReportPreview extends StatelessWidget {
             ),
             child: ListTile(
               dense: true,
-              leading: Image.asset("assets/images/banners/112000/Sophia.png"),
-              title: Text(fight.name),
+              leading: CachedNetworkImage(
+                imageUrl: MapHelper.mapToImageUrl(fight.map?.id ?? 0),
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.error_outline_outlined),
+              ),
+              title: RichText(
+                text: TextSpan(
+                  text: fight.name,
+                  children: [
+                    TextSpan(
+                        text: " (${fight.duration.toHHMMSS()})",
+                        style: TextStyles.caption)
+                  ],
+                ),
+              ),
               subtitle: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    fight.duration.toString().split('.').first.padLeft(8, "0"),
+                  const SizedBox(
+                    height: 4,
                   ),
-                  if (fight.bossPercentage != null)
+                  if (!(fight.kill ?? false))
                     LinearPercentIndicator(
-                      lineHeight: 16.0,
+                      lineHeight: 20.0,
                       animation: true,
                       barRadius: Radius.circular(5.0),
                       padding: EdgeInsets.zero,
@@ -54,10 +74,32 @@ class ReportPreview extends StatelessWidget {
                         ),
                       ),
                     )
+                  else
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          color: Colors.green,
+                          size: 18,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          "Kill",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: FontSizes.s14,
+                          ),
+                        )
+                      ],
+                    )
                 ],
               ),
               trailing: Icon(Icons.keyboard_arrow_right_rounded),
               onTap: () {
+                var reportsModel = context.read<ReportsModel>();
+                reportsModel.setFightIds([fight.id]);
                 Navigator.push(
                   context,
                   MaterialPageRoute(

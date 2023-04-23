@@ -35,17 +35,22 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
-  flutter_launcher_icons: ^0.13.0
+  flutter_launcher_icons: ^0.13.1
   oauth2: ^2.0.1
   graphql_flutter: ^5.1.2
   url_launcher: ^6.1.10
   uni_links: ^0.5.1
   percent_indicator: ^4.2.3
-  fl_chart: ^0.61.0
+  fl_chart: ^0.62.0
   path_provider: ^2.0.14
   enum_to_string: ^2.0.1
-  intl: ^0.18.0
+  intl: ^0.18.1
   flutter_animate: ^4.1.1+1
+  cached_network_image: ^3.2.3
+  flutter_svg: ^2.0.5
+  provider: ^6.0.5
+  animated_text_kit: ^4.2.2
+  collection: ^1.17.0
 
 dev_dependencies:
   flutter_test:
@@ -73,24 +78,9 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/zones.json
     - assets/images/banners/112000/
-    - assets/images/banners/113000/
     - assets/images/map_icons/060000/
-    - assets/images/class_action_icons/000000/
-    - assets/images/class_action_icons/001000/
-    - assets/images/class_action_icons/002000/
-    - assets/images/class_action_icons/003000/
-    - assets/images/class_action_icons/010000/
-    - assets/images/class_action_icons/011000/
-    - assets/images/class_action_icons/012000/
-    - assets/images/class_action_icons/013000/
-    - assets/images/class_action_icons/014000/
-    - assets/images/class_action_icons/015000/
-    - assets/images/class_action_icons/016000/
-    - assets/images/class_action_icons/017000/
-    - assets/images/class_action_icons/018000/
-    - assets/images/class_action_icons/019000/
-    - assets/images/class_action_icons/020000/
+    - assets/images/class_action_icons/
     - assets/images/class_icons/
+    - assets/images/class_svgs/
     - assets/images/

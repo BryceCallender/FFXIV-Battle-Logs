@@ -4,12 +4,17 @@ import 'dart:io';
 import 'package:ffxiv_battle_logs/components/reports/report_overview.dart';
 import 'package:ffxiv_battle_logs/graphql/graphql_queries.dart';
 import 'package:ffxiv_battle_logs/models/reports.dart';
+import 'package:ffxiv_battle_logs/providers/reports_model.dart';
+import 'package:ffxiv_battle_logs/screens/reports_screen.dart';
+import 'package:ffxiv_battle_logs/screens/welcome_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:flutter/material.dart';
 import 'package:ffxiv_battle_logs/constants.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -79,6 +84,7 @@ Future<String> get _localPath async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initHiveForFlutter();
 
   var client = await createClient();
   subscription?.cancel();
@@ -92,7 +98,19 @@ void main() async {
   // program.
   await credentialsFile.writeAsString(client.credentials.toJson());
   Animate.restartOnHotReload = true;
-  runApp(MyApp(credentials: client.credentials));
+
+  List<SingleChildWidget> providers = [
+    ChangeNotifierProvider<ReportsModel>(
+      create: (_) => ReportsModel(),
+    ),
+  ];
+
+  runApp(
+    MultiProvider(
+      providers: providers,
+      child: MyApp(credentials: client.credentials),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -106,8 +124,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ValueNotifier<GraphQLClient>? client;
-
-  // This widget is the root of your application.
+  
   @override
   void initState() {
     super.initState();
@@ -122,7 +139,7 @@ class _MyAppState extends State<MyApp> {
 
     client = ValueNotifier(
       GraphQLClient(
-        cache: GraphQLCache(),
+        cache: GraphQLCache(store: HiveStore()),
         link: link,
       ),
     );
@@ -138,115 +155,22 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData.dark(
           useMaterial3: true,
         ),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        home: const MyHomePage(),
       ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ScrollController? _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = ScrollController();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller?.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Query(
-                options: QueryOptions(
-                  document: gql(GraphQLQueries.reports),
-                  variables: {'page': 1, 'userID': 0},
-                ),
-                builder: (QueryResult result,
-                    {VoidCallback? refetch, FetchMore? fetchMore}) {
-                  if (result.hasException) {
-                    return Text(result.exception.toString());
-                  }
-
-                  if (result.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  Reports reportData = Reports.fromJson(
-                      result.data?['reportData']?['reports'] ?? {});
-
-                  if (reportData.reports.isEmpty) {
-                    return const Text('No repositories');
-                  }
-
-                  final int nextPage = reportData.currentPage + 1;
-
-                  FetchMoreOptions opts = FetchMoreOptions(
-                    variables: {'page': nextPage},
-                    updateQuery: (previousResultData, fetchMoreResultData) {
-                      final List<dynamic> reports = [
-                        ...previousResultData?['reportData']['reports']['data']
-                            as List<dynamic>,
-                        ...fetchMoreResultData?['reportData']['reports']['data']
-                            as List<dynamic>
-                      ];
-
-                      fetchMoreResultData?['reportData']['reports']['data'] =
-                          reports;
-
-                      return fetchMoreResultData;
-                    },
-                  );
-
-                  return NotificationListener(
-                    child: ListView.builder(
-                      key: PageStorageKey<String>('reports'),
-                      controller: _controller,
-                      shrinkWrap: true,
-                      itemCount: reportData.reports.length,
-                      itemBuilder: (context, index) {
-                        return ReportOverview(
-                          data: reportData.reports[index],
-                        );
-                      },
-                    ),
-                    onNotification: (t) {
-                      if (t is ScrollEndNotification &&
-                          t.metrics.atEdge &&
-                          reportData.hasMorePages) {
-                        fetchMore!(opts);
-                      }
-                      return true;
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return ReportsScreen();
   }
 }

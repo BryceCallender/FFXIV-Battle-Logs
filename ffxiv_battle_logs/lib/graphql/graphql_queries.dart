@@ -67,6 +67,9 @@ class GraphQLQueries {
           kill
           startTime
           endTime
+          maps {
+            id
+          }
         }
       }
     }
@@ -77,22 +80,33 @@ class GraphQLQueries {
   query ReportBreakdown(\$code: String!, \$fightIDs: [Int]) {
     reportData {
       report(code: \$code) {
-        graph(fightIDs: \$fightIDs)
-        rankings(fightIDs: \$fightIDs)
         playerDetails(fightIDs: \$fightIDs)
-        events(fightIDs: \$fightIDs) {
+        table(fightIDs: \$fightIDs)
+        rankings(fightIDs: \$fightIDs)
+        events(fightIDs: \$fightIDs, limit: 100) {
           data
           nextPageTimestamp
         }
-        table(fightIDs: \$fightIDs)
         masterData {
-          actors {
+          abilities {
+            gameID
             icon
+          }
+          actors {
             id
             name
-            server
           }
         }
+      }
+    }
+  }
+  """;
+
+  static const userBreakdown = """
+  query UserDetailBreakdown(\$code: String!, \$fightIDs: [Int], \$sourceID: Int!) {
+    reportData {
+      report(code: \$code) {
+        table(fightIDs: \$fightIDs, sourceID: \$sourceID)
       }
     }
   }

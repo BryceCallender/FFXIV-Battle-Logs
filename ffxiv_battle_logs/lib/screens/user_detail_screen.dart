@@ -1,20 +1,41 @@
-import 'package:ffxiv_battle_logs/components/party_section.dart';
-import 'package:ffxiv_battle_logs/components/table_section.dart';
-import 'package:ffxiv_battle_logs/graphql/graphql_queries.dart';
-import 'package:ffxiv_battle_logs/models/breakdown.dart';
 import 'package:flutter/material.dart';
+import 'package:ffxiv_battle_logs/components/user_detail_table_section.dart';
+import 'package:ffxiv_battle_logs/models/character.dart';
+import 'package:ffxiv_battle_logs/models/user_breakdown.dart';
+import 'package:ffxiv_battle_logs/graphql/graphql_queries.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-class BreakdownScreen extends StatelessWidget {
+class UserDetailScreen extends StatelessWidget {
   final String code;
-  final int fightId;
-  const BreakdownScreen({super.key, required this.code, required this.fightId});
+  final List<int> fightIds;
+  final Character character;
+
+  const UserDetailScreen(
+      {super.key,
+      required this.code,
+      required this.fightIds,
+      required this.character});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Fight #$fightId"),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Hero(
+              tag: '${character.type}',
+              child: Image.asset(
+                "assets/images/class_icons/${character.type.toLowerCase()}.png",
+                width: 32,
+                height: 32,
+              ),
+            ),
+            const SizedBox(width: 4,),
+            Text(character.name),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -24,10 +45,11 @@ class BreakdownScreen extends StatelessWidget {
               Expanded(
                 child: Query(
                     options: QueryOptions(
-                      document: gql(GraphQLQueries.reportBreakdown),
+                      document: gql(GraphQLQueries.userBreakdown),
                       variables: {
                         'code': code,
-                        'fightIDs': [fightId]
+                        'fightIDs': fightIds,
+                        'sourceID': character.id
                       },
                     ),
                     builder: (QueryResult result,
@@ -40,16 +62,12 @@ class BreakdownScreen extends StatelessWidget {
                         return const Center(child: CircularProgressIndicator());
                       }
 
-                      Breakdown breakdown = Breakdown.fromJson(
+                      UserBreakdown breakdown = UserBreakdown.fromJson(
                           result.data?['reportData']?['report'] ?? {});
 
                       return ListView(
                         children: [
-                          PartySection(
-                            players: breakdown.playerDetails,
-                            rankings: breakdown.rankings,
-                          ),
-                          TableSection(
+                          UserDetailTableSection(
                             tableData: breakdown.tableData,
                           )
                         ],
